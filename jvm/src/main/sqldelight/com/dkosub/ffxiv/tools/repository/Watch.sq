@@ -1,0 +1,36 @@
+CREATE TABLE IF NOT EXISTS watch
+(
+    id         SERIAL,
+    item_id    INT REFERENCES item (id) ON DELETE CASCADE,
+    recipe_id  INT REFERENCES recipe (id) ON DELETE CASCADE,
+    created_by INT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+create:
+INSERT INTO watch(item_id, created_by) VALUES(?, ?);
+
+remove:
+DELETE FROM watch WHERE id = ?;
+
+list:
+SELECT w.id, COALESCE(w.item_id, r.item_id, 0) AS item_id, i.name, COALESCE(r.quantity, 1) AS quantity,
+ipdc.minimum AS datacenter_minimum, ipdc.mean AS datacenter_mean, ipdc.deviation AS datacenter_deviation,
+ipw.minimum AS world_minimum, ipw.mean AS world_mean, ipw.deviation AS world_deviation
+FROM watch w
+LEFT JOIN recipe r ON w.recipe_id = r.id
+INNER JOIN item i ON COALESCE(w.item_id, r.item_id) = i.id
+INNER JOIN item_prices ipdc ON COALESCE(w.item_id, r.item_id) = ipdc.item_id AND ipdc.datacenter_id = :datacenterId
+INNER JOIN item_prices ipw ON COALESCE(w.item_id, r.item_id) = ipw.item_id AND ipw.world_id = :worldId;
+
+listMaterials:
+SELECT w.id AS watch_id, m.item_id, i.name, m.quantity,
+ipdc.minimum AS datacenter_minimum, ipdc.mean AS datacenter_mean, ipdc.deviation AS datacenter_deviation,
+ipw.minimum AS world_minimum, ipw.mean AS world_mean, ipw.deviation AS world_deviation
+FROM watch w
+INNER JOIN recipe_materials m ON w.recipe_id = m.recipe_id
+INNER JOIN item i ON m.item_id = i.id
+INNER JOIN item_prices ipdc ON m.item_id = ipdc.item_id AND ipdc.datacenter_id = :datacenterId
+INNER JOIN item_prices ipw ON m.item_id = ipw.item_id AND ipw.world_id = :worldId
+WHERE w.id IN :watchIds AND w.recipe_id IS NOT NULL;

@@ -1,0 +1,66 @@
+CREATE TABLE IF NOT EXISTS item
+(
+    id         INT            NOT NULL,
+    name       TEXT           NOT NULL,
+    marketable INT AS Boolean NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE INDEX item_name_index ON item (name);
+
+CREATE TABLE IF NOT EXISTS item_prices
+(
+    item_id       INT  NOT NULL REFERENCES item (id) ON DELETE CASCADE NOT NULL,
+    datacenter_id INT  NOT NULL DEFAULT 0,
+    world_id      INT  NOT NULL DEFAULT 0,
+    minimum       INT  NOT NULL,
+    mean          INT  NOT NULL,
+    deviation     REAL NOT NULL,
+    PRIMARY KEY(item_id, datacenter_id, world_id)
+);
+
+CREATE TABLE IF NOT EXISTS recipe
+(
+    id       INT NOT NULL,
+    item_id  INT NOT NULL,
+    quantity INT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS recipe_materials
+(
+    recipe_id INT NOT NULL REFERENCES recipe (id) ON DELETE CASCADE NOT NULL,
+    item_id   INT NOT NULL REFERENCES item (id) ON DELETE CASCADE   NOT NULL,
+    quantity  INT NOT NULL,
+    PRIMARY KEY (recipe_id, item_id)
+);
+
+createItem:
+INSERT INTO item(id, name, marketable) VALUES(?, ?, ?);
+
+createRecipe:
+INSERT INTO recipe(id, item_id, quantity) VALUES(?, ?, ?);
+
+addRecipeMaterial:
+INSERT INTO recipe_materials(recipe_id, item_id, quantity) VALUES(?, ?, ?);
+
+listRecipeItems:
+SELECT item_id FROM recipe
+UNION
+SELECT item_id FROM recipe_materials
+UNION
+SELECT item_id FROM watch WHERE item_id IS NOT NULL;
+
+updateDatacenterPrices {
+    UPDATE item_prices SET minimum = :minimum, mean = :mean, deviation = :deviation
+    WHERE item_id = :itemId AND datacenter_id = :datacenterId;
+
+    INSERT INTO item_prices VALUES(:itemId, :datacenterId, 0, :minimum, :mean, :deviation) ON CONFLICT DO NOTHING;
+}
+
+updateWorldPrices {
+    UPDATE item_prices SET minimum = :minimum, mean = :mean, deviation = :deviation
+    WHERE item_id = :itemId AND world_id = :worldId;
+
+    INSERT INTO item_prices VALUES(:itemId, 0, :worldId, :minimum, :mean, :deviation) ON CONFLICT DO NOTHING;
+}
