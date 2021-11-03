@@ -10,11 +10,11 @@ data class CurrentlyShownResponse(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class CurrentlyShownItem(
     val itemID: Int,
-    val listings: List<Listing>
+    val listings: List<CurrentlyShownItemListing>
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Listing(
+data class CurrentlyShownItemListing(
     val worldID: Int,
     val pricePerUnit: Int,
     val quantity: Int

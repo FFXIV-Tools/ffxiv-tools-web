@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS item_prices
     minimum       INT  NOT NULL,
     mean          INT  NOT NULL,
     deviation     REAL NOT NULL,
+    nq_velocity   REAL NOT NULL DEFAULT 0,
+    hq_velocity   REAL NOT NULL DEFAULT 0,
     PRIMARY KEY(item_id, datacenter_id, world_id)
 );
 
@@ -44,23 +46,25 @@ INSERT INTO recipe(id, item_id, quantity) VALUES(?, ?, ?);
 addRecipeMaterial:
 INSERT INTO recipe_materials(recipe_id, item_id, quantity) VALUES(?, ?, ?);
 
-listRecipeItems:
-SELECT item_id FROM recipe
-UNION
-SELECT item_id FROM recipe_materials
-UNION
-SELECT item_id FROM watch WHERE item_id IS NOT NULL;
+listMarketableItems:
+SELECT id FROM item WHERE marketable = 1;
 
 updateDatacenterPrices {
     UPDATE item_prices SET minimum = :minimum, mean = :mean, deviation = :deviation
     WHERE item_id = :itemId AND datacenter_id = :datacenterId;
 
-    INSERT INTO item_prices VALUES(:itemId, :datacenterId, 0, :minimum, :mean, :deviation) ON CONFLICT DO NOTHING;
+    INSERT INTO item_prices(item_id, datacenter_id, minimum, mean, deviation)
+    VALUES(:itemId, :datacenterId, :minimum, :mean, :deviation) ON CONFLICT DO NOTHING;
 }
 
 updateWorldPrices {
     UPDATE item_prices SET minimum = :minimum, mean = :mean, deviation = :deviation
     WHERE item_id = :itemId AND world_id = :worldId;
 
-    INSERT INTO item_prices VALUES(:itemId, 0, :worldId, :minimum, :mean, :deviation) ON CONFLICT DO NOTHING;
+    INSERT INTO item_prices(item_id, world_id, minimum, mean, deviation)
+    VALUES(:itemId, :worldId, :minimum, :mean, :deviation) ON CONFLICT DO NOTHING;
 }
+
+updateWorldVelocity:
+UPDATE item_prices SET nq_velocity = :nqVelocity, hq_velocity = :hqVelocity
+WHERE item_id = :itemId AND world_id = :worldId;

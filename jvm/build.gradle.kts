@@ -18,6 +18,12 @@ dependencies {
     implementation("com.google.dagger:dagger:2.39.1")
     kapt("com.google.dagger:dagger-compiler:2.39.1")
 
+    // Logging
+    implementation("ch.qos.logback:logback-classic:1.2.6")
+
+    // Scheduling
+    implementation("io.jooby:jooby-quartz:2.11.0")
+
     // Database
     implementation("com.zaxxer:HikariCP:5.0.0")
     implementation("org.postgresql:postgresql:42.2.24")
