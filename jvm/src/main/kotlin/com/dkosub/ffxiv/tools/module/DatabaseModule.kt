@@ -1,5 +1,6 @@
 package com.dkosub.ffxiv.tools.module
 
+import com.dkosub.ffxiv.tools.config.DatabaseConfig
 import com.dkosub.ffxiv.tools.repository.Database
 import com.squareup.sqldelight.sqlite.driver.asJdbcDriver
 import com.zaxxer.hikari.HikariConfig
@@ -12,14 +13,13 @@ import javax.inject.Singleton
 class DatabaseModule {
     @Provides
     @Singleton
-    fun provideDatabase(): Database {
-        val config = HikariConfig()
-        config.jdbcUrl = "jdbc:postgresql://localhost:5432/ffxivtools"
-        // TODO: Eventually integrate this with some sort of configuration :)
-        config.username = "ffxivtools"
-        config.password = "ffxivtools"
+    fun provideDatabase(config: DatabaseConfig): Database {
+        val hikariConfig = HikariConfig()
+        hikariConfig.jdbcUrl = "jdbc:${config.dialect()}://${config.host()}:${config.port()}/${config.databaseName()}"
+        hikariConfig.username = config.username()
+        hikariConfig.password = config.password()
 
-        val driver = HikariDataSource(config).asJdbcDriver()
+        val driver = HikariDataSource(hikariConfig).asJdbcDriver()
         return Database(driver)
     }
 }

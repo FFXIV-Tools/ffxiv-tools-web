@@ -1,5 +1,6 @@
 package com.dkosub.ffxiv.tools.tool
 
+import com.dkosub.ffxiv.tools.module.ConfigurationModule
 import com.dkosub.ffxiv.tools.module.DatabaseModule
 import com.dkosub.ffxiv.tools.module.HttpClientModule
 import com.dkosub.ffxiv.tools.repository.Database
@@ -19,7 +20,7 @@ private const val UNIVERSALIS_MARKETABLE_URL = "https://universalis.app/api/mark
 private const val ITEM_CSV_URL = "https://raw.githubusercontent.com/xivapi/ffxiv-datamining/master/csv/Item.csv"
 
 @Singleton
-@Component(modules = [DatabaseModule::class, HttpClientModule::class])
+@Component(modules = [ConfigurationModule::class, DatabaseModule::class, HttpClientModule::class])
 interface ItemImporterApplication {
     fun database(): Database
 

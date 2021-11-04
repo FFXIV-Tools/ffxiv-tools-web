@@ -2,6 +2,7 @@ package com.dkosub.ffxiv.tools
 
 import com.dkosub.ffxiv.tools.controller.WatchController
 import com.dkosub.ffxiv.tools.job.UniversalisJob
+import com.dkosub.ffxiv.tools.module.ConfigurationModule
 import com.dkosub.ffxiv.tools.module.DatabaseModule
 import com.dkosub.ffxiv.tools.module.HttpClientModule
 import dagger.Component
@@ -11,7 +12,7 @@ import io.jooby.runApp
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [DatabaseModule::class, HttpClientModule::class])
+@Component(modules = [ConfigurationModule::class, DatabaseModule::class, HttpClientModule::class])
 interface Application {
     // Controllers
     fun watchController(): WatchController
