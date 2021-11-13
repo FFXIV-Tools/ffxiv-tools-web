@@ -1,15 +1,18 @@
 CREATE TABLE IF NOT EXISTS watch
 (
-    id         SERIAL,
-    item_id    INT REFERENCES item (id) ON DELETE CASCADE,
-    recipe_id  INT REFERENCES recipe (id) ON DELETE CASCADE,
-    created_by INT,
+    id         BIGSERIAL,
+    item_id    INT    REFERENCES item (id) ON DELETE CASCADE,
+    recipe_id  INT    REFERENCES recipe (id) ON DELETE CASCADE,
+    account_id BIGINT REFERENCES account(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
-create:
-INSERT INTO watch(item_id, created_by) VALUES(?, ?);
+createForItem:
+INSERT INTO watch(item_id, account_id) VALUES(:itemId, :accountId);
+
+createForRecipe:
+INSERT INTO watch(recipe_id, account_id) VALUES(:recipeId, :accountId);
 
 remove:
 DELETE FROM watch WHERE id = ?;
@@ -22,7 +25,8 @@ FROM watch w
 LEFT JOIN recipe r ON w.recipe_id = r.id
 INNER JOIN item i ON COALESCE(w.item_id, r.item_id) = i.id
 INNER JOIN item_prices ipdc ON COALESCE(w.item_id, r.item_id) = ipdc.item_id AND ipdc.datacenter_id = :datacenterId
-INNER JOIN item_prices ipw ON COALESCE(w.item_id, r.item_id) = ipw.item_id AND ipw.world_id = :worldId;
+INNER JOIN item_prices ipw ON COALESCE(w.item_id, r.item_id) = ipw.item_id AND ipw.world_id = :worldId
+WHERE w.account_id = :accountId;
 
 listMaterials:
 SELECT w.id AS watch_id, m.item_id, i.name, m.quantity,

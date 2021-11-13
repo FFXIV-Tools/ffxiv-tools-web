@@ -21,6 +21,9 @@ dependencies {
     // Logging
     implementation("ch.qos.logback:logback-classic:1.2.6")
 
+    // Security
+    implementation("com.auth0:java-jwt:3.18.2")
+
     // Scheduling
     implementation("io.jooby:jooby-quartz:2.11.0")
 

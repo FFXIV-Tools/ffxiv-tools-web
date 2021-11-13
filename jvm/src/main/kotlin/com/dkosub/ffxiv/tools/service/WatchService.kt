@@ -1,5 +1,6 @@
 package com.dkosub.ffxiv.tools.service
 
+import com.dkosub.ffxiv.tools.model.Account
 import com.dkosub.ffxiv.tools.model.response.Material
 import com.dkosub.ffxiv.tools.model.response.Watch
 import com.dkosub.ffxiv.tools.repository.Database
@@ -11,23 +12,28 @@ import javax.inject.Inject
 class WatchService @Inject constructor(
     private val db: Database
 ) {
-    suspend fun getAll(): List<Watch> {
-        // TODO: Need to eventually pass these in from the user session? Cater to Lamia for now.
-        val watchers = db.watchQueries.list(5, 55).asFlow()
+    suspend fun getAll(account: Account) = getAll(account.id, account.datacenterId, account.worldId)
+
+    private suspend fun getAll(accountId: Long, datacenterId: Int, worldId: Int): List<Watch> {
+        val watchQuery = db.watchQueries.list(
+            accountId = accountId,
+            datacenterId = datacenterId,
+            worldId = worldId
+        )
+        val watches = watchQuery.asFlow()
             .mapToList()
             .first()
 
         val listMaterialsQuery = db.watchQueries.listMaterials(
-            watchIds = watchers.map { it.id },
-            datacenterId = 5,
-            worldId = 55,
+            watchIds = watches.map { it.id },
+            datacenterId = datacenterId,
+            worldId = worldId,
         )
-
         val allMaterials = listMaterialsQuery.asFlow()
             .mapToList()
             .first()
 
-        return watchers.map { watch ->
+        return watches.map { watch ->
             val materials = allMaterials
                 .filter { it.watch_id == watch.id }
                 .map {

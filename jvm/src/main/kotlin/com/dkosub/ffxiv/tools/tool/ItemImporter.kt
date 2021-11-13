@@ -8,8 +8,6 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import dagger.Component
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.java.*
-import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -46,10 +44,8 @@ suspend fun main() {
     }
 
     csvReader().openAsync(response.receive<InputStream>()) {
-        readNext() // Header 1
-        readNext() // Header 2
-        readNext() // Header 3
-        readNext() // id = 0
+        // First 3 lines are headers, 4th is 0.
+        repeat(4) { readNext() }
 
         // Parse all items and insert into the item DB
         readAllAsSequence().forEach {

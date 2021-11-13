@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS account
+(
+    id            BIGINT NOT NULL,
+    name          TEXT   NOT NULL DEFAULT '',
+    datacenter_id INT    NOT NULL DEFAULT 0,
+    world_id      INT    NOT NULL DEFAULT 0,
+    PRIMARY KEY (id)
+);
+
+get:
+SELECT * FROM account WHERE id = :id;
+
+upsert:
+INSERT INTO account(id) VALUES(:id) ON CONFLICT DO NOTHING;

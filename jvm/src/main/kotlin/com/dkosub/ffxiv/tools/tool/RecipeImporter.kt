@@ -37,10 +37,8 @@ suspend fun main() {
     }
 
     csvReader().openAsync(response.receive<InputStream>()) {
-        readNext() // Header 1
-        readNext() // Header 2
-        readNext() // Header 3
-        readNext() // id = 0
+        // First 3 lines are headers, 4th is 0.
+        repeat(4) { readNext() }
 
         // Parse all items and insert into the item DB
         readAllAsSequence().forEach eachRecipe@{ row ->
