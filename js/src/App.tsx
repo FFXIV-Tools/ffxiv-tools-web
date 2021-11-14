@@ -1,89 +1,22 @@
-import Cookies from 'universal-cookie';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from "react";
 
-const cookies = new Cookies();
+import CardModal from "./component/modal/CardModal";
+import Dropdown from "./component/Dropdown";
 
-function loggedIn() {
-    return !cookies.get("jsx");
-}
+import {useLoginStatus} from "./hook/auth";
+import {authToken} from "./util/cookie";
 
 const toPercentString = (value: number, decimals: number = 2): string =>
     `${(value * 100).toFixed(decimals)}%`;
 
-const fetchWatches = async (setWatches: (arg0: Watch[]) => void) => {
-    const response = await fetch("http://localhost:8080/api/v1/watches", {
+const fetchWatches = async (): Promise<Watch[]> => {
+    const response = await fetch("/api/v1/watches", {
         headers: {
-            Authorization: `Bearer ${cookies.get("jwt")}`,
+            Authorization: `Bearer ${authToken()}`,
         },
     });
 
-    setWatches(await response.json());
-};
-
-type DropdownProps = {
-    children: JSX.Element | JSX.Element[],
-    label: string | JSX.Element | JSX.Element[],
-};
-
-const Dropdown = ({children, label}: DropdownProps) => {
-    const [active, setActive] = useState<boolean>(false);
-    const buttonRef = useRef<HTMLButtonElement>(null);
-
-    function onButtonClick() {
-        setActive(!active);
-    }
-
-    function onDocumentClick(e: MouseEvent) {
-        if (e.target !== buttonRef.current) {
-            setActive(false);
-        }
-    }
-
-    useEffect(() => {
-        document.addEventListener("click", onDocumentClick)
-        return () => document.removeEventListener("click", onDocumentClick);
-    }, []);
-
-    return <div className={`dropdown ${active ? "is-active" : ""}`}>
-        <div className="dropdown-trigger">
-            <button className="button is-small" onClick={onButtonClick} ref={buttonRef}>
-                {label}
-            </button>
-        </div>
-        <div className="dropdown-menu" role="menu">
-            <div className="dropdown-content">{children}</div>
-        </div>
-    </div>;
-};
-
-type ModalProps = {
-    active: boolean,
-    close: () => void,
-    children: JSX.Element | JSX.Element[],
-};
-
-const Modal = ({active, close, children}: ModalProps) => {
-    return <div className={`modal ${active ? "is-active" : ""}`} onClick={close}>
-        <div className="modal-background"/>
-        {children}
-        <button className="modal-close is-large" aria-label="close" onClick={close}>Close</button>
-    </div>;
-};
-
-type CardModalProps = ModalProps & {
-    title: string,
-};
-
-const CardModal = ({active, close, children, title}: CardModalProps) => {
-    return <Modal active={active} close={close}>
-        <div className="modal-card">
-            <header className="modal-card-head">
-                <div className="modal-card-title">{title}</div>
-                <button className="delete" aria-label="close" onClick={close}/>
-            </header>
-            <section className="modal-card-body">{children}</section>
-        </div>
-    </Modal>
+    return await response.json();
 };
 
 type WatchItemProps = {
@@ -169,7 +102,7 @@ const WatchList = () => {
     const [watches, setWatches] = useState<Watch[]>([]);
 
     useEffect(() => {
-        (async () => await fetchWatches(setWatches))();
+        (async () => setWatches(await fetchWatches()))();
     }, []);
 
     return <>
@@ -196,33 +129,41 @@ const WatchList = () => {
 }
 
 const App = () => {
+    const [loggedIn, logOut] = useLoginStatus();
+
+    let content;
+    let navbarButtons;
+    if (loggedIn) {
+        navbarButtons = <div className="buttons">
+            <button className="button is-primary" onClick={logOut}>Log Out</button>
+        </div>;
+
+        content = <WatchList/>;
+    } else {
+        navbarButtons = <div className="buttons">
+            <a href="/auth/redirect" className="button is-primary">Log In</a>
+        </div>;
+
+        content = <p className="has-text-centered">Please log in to use features on this site.</p>;
+    }
+
     return <>
         <nav className="navbar is-fixed-top has-shadow" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
-                <a href="/" className="navbar-item">
-                    FFXIV Tools
-                </a>
+                <a href="/" className="navbar-item">FFXIV Tools</a>
             </div>
             <div className="navbar-menu">
                 <div className="navbar-start">
                     <a href="/" className="navbar-item">Watched Items</a>
                 </div>
-                {!loggedIn() && <div className="navbar-end">
-                    <div className="navbar-item">
-                        <div className="buttons">
-                            <a href="/auth/redirect" className="button is-primary">Log In</a>
-                        </div>
-                    </div>
-                </div>}
+                <div className="navbar-end">
+                    <div className="navbar-item">{navbarButtons}</div>
+                </div>
             </div>
         </nav>
-        <div className="container mt-5">
-            <WatchList/>
-        </div>
+        <div className="container mt-5">{content}</div>
         <div className="footer mt-6">
-            <div className="content has-text-centered">
-                Copyright &copy; 2021 FFXIV Tools
-            </div>
+            <div className="content has-text-centered">Copyright &copy; 2021 FFXIV Tools</div>
         </div>
     </>;
 };
