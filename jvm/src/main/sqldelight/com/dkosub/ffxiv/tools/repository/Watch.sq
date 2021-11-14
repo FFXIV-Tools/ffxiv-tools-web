@@ -14,8 +14,11 @@ INSERT INTO watch(item_id, account_id) VALUES(:itemId, :accountId);
 createForRecipe:
 INSERT INTO watch(recipe_id, account_id) VALUES(:recipeId, :accountId);
 
-remove:
-DELETE FROM watch WHERE id = ?;
+getOwner:
+SELECT account_id FROM watch WHERE id = :id;
+
+delete:
+DELETE FROM watch WHERE id = :id;
 
 list:
 SELECT w.id, COALESCE(w.item_id, r.item_id, 0) AS item_id, i.name, COALESCE(r.quantity, 1) AS quantity,

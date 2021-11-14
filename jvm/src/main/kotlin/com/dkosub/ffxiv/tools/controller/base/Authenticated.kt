@@ -11,7 +11,7 @@ private val BEARER_REGEX = Regex("^Bearer (.*)$")
 open class Authenticated(
     private val authService: AuthService,
 ) {
-    suspend fun validateUser(ctx: Context): Account {
+    suspend fun validateAccount(ctx: Context): Account {
         val authHeader = ctx.header("authorization")
         if (authHeader.isMissing) {
             throw StatusCodeException(StatusCode.UNAUTHORIZED)

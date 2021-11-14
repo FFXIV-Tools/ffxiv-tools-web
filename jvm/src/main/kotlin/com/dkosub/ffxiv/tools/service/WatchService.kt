@@ -1,17 +1,35 @@
 package com.dkosub.ffxiv.tools.service
 
+import com.dkosub.ffxiv.tools.enm.DeleteStatus
 import com.dkosub.ffxiv.tools.model.Account
 import com.dkosub.ffxiv.tools.model.response.Material
 import com.dkosub.ffxiv.tools.model.response.Watch
 import com.dkosub.ffxiv.tools.repository.Database
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
+import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class WatchService @Inject constructor(
     private val db: Database
 ) {
+    suspend fun delete(account: Account, id: Long): DeleteStatus {
+        val result = db.watchQueries.getOwner(id).asFlow()
+            .mapToOneOrNull()
+            .first()
+
+        if (result == null) {
+            return DeleteStatus.NOT_FOUND
+        } else if (account.id != result.account_id) {
+            return DeleteStatus.NOT_AUTHORIZED
+        }
+
+        db.watchQueries.delete(id)
+
+        return DeleteStatus.DELETED
+    }
+
     suspend fun getAll(account: Account) = getAll(account.id, account.datacenterId, account.worldId)
 
     private suspend fun getAll(accountId: Long, datacenterId: Int, worldId: Int): List<Watch> {
@@ -51,6 +69,7 @@ class WatchService @Inject constructor(
                 }
 
             Watch(
+                id = watch.id!!, // Not sure why SQLDelight views this as nullable?
                 itemId = watch.item_id.toInt(),
                 name = watch.name,
                 datacenterMinimum = watch.datacenter_minimum,

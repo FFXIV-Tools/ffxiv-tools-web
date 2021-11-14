@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from "react";
 
 import CardModal from "./component/modal/CardModal";
+import ConfirmModal from "./component/modal/ConfirmModal";
 import Dropdown from "./component/Dropdown";
 
 import {useLoginStatus} from "./hook/auth";
+import {useModal} from "./hook/modal";
 import {authToken} from "./util/cookie";
 
 const toPercentString = (value: number, decimals: number = 2): string =>
@@ -20,18 +22,22 @@ const fetchWatches = async (): Promise<Watch[]> => {
 };
 
 type WatchItemProps = {
+    onDeleteWatch: (arg0: Watch) => void,
     watch: Watch,
 };
 
-const WatchItem = ({watch}: WatchItemProps) => {
-    const [materialModalActive, setMaterialModalActive] = useState<boolean>(false);
+const WatchItem = ({onDeleteWatch, watch}: WatchItemProps) => {
+    const [materialModalActive, showMaterialModal, hideMaterialModal] = useModal();
+    const [deleteModalActive, showDeleteModal, hideDeleteModal] = useModal();
 
-    function hideMaterialModal() {
-        setMaterialModalActive(false);
-    }
-
-    function showMaterialModal() {
-        setMaterialModalActive(true);
+    async function deleteWatch() {
+        await fetch(`/api/v1/watches/${watch.id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${authToken()}`,
+            }
+        });
+        onDeleteWatch(watch);
     }
 
     const itemMin = watch.worldMinimum;
@@ -59,7 +65,7 @@ const WatchItem = ({watch}: WatchItemProps) => {
             <Dropdown label="Actions">
                 <>
                     {materialsDropdownItem}
-                    <div className="dropdown-item" role="menuitem">Delete</div>
+                    <div className="dropdown-item" role="menuitem" onClick={showDeleteModal}>Delete</div>
                 </>
             </Dropdown>
             <CardModal active={materialModalActive} close={hideMaterialModal} title={`Materials for ${watch.name}`}>
@@ -87,6 +93,14 @@ const WatchItem = ({watch}: WatchItemProps) => {
                     </tbody>
                 </table>
             </CardModal>
+            <ConfirmModal
+                active={deleteModalActive}
+                close={hideDeleteModal}
+                onYes={deleteWatch}
+                title="Delete Watch"
+            >
+                <p>Stop watching {watch.name}?</p>
+            </ConfirmModal>
         </td>
         <td>{watch.name}</td>
         <td>{itemMin.toLocaleString()}</td>
@@ -100,6 +114,10 @@ const WatchItem = ({watch}: WatchItemProps) => {
 
 const WatchList = () => {
     const [watches, setWatches] = useState<Watch[]>([]);
+
+    function onDeleteWatch(watch: Watch) {
+        setWatches(watches.filter(w => w !== watch));
+    }
 
     useEffect(() => {
         (async () => setWatches(await fetchWatches()))();
@@ -121,7 +139,11 @@ const WatchList = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {watches.map(watch => <WatchItem key={watch.itemId} watch={watch}/>)}
+                {watches.map(watch => <WatchItem
+                    key={watch.itemId}
+                    onDeleteWatch={onDeleteWatch}
+                    watch={watch}
+                />)}
                 </tbody>
             </table>
         </main>

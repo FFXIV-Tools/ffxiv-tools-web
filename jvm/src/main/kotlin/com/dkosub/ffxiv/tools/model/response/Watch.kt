@@ -1,6 +1,7 @@
 package com.dkosub.ffxiv.tools.model.response
 
 data class Watch(
+    val id: Long,
     val itemId: Int,
     val name: String,
     val datacenterMinimum: Int,

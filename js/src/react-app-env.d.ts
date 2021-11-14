@@ -13,6 +13,7 @@ type Material = {
 };
 
 type Watch = {
+    id: number,
     itemId: number,
     name: string,
     datacenterMinimum: number,
