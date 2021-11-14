@@ -42,14 +42,19 @@ class WatchService @Inject constructor(
             .mapToList()
             .first()
 
-        val listMaterialsQuery = db.watchQueries.listMaterials(
-            watchIds = watches.map { it.id },
-            datacenterId = datacenterId,
-            worldId = worldId,
-        )
-        val allMaterials = listMaterialsQuery.asFlow()
-            .mapToList()
-            .first()
+        val allMaterials = if (watches.isNotEmpty()) {
+            val listMaterialsQuery = db.watchQueries.listMaterials(
+                watchIds = watches.map { it.id },
+                datacenterId = datacenterId,
+                worldId = worldId,
+            )
+
+            listMaterialsQuery.asFlow()
+                .mapToList()
+                .first()
+        } else {
+            emptyList()
+        }
 
         return watches.map { watch ->
             val materials = allMaterials

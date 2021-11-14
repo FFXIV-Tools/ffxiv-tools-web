@@ -113,40 +113,47 @@ const WatchItem = ({onDeleteWatch, watch}: WatchItemProps) => {
 };
 
 const WatchList = () => {
-    const [watches, setWatches] = useState<Watch[]>([]);
+    const [watches, setWatches] = useState<Watch[]>();
 
     function onDeleteWatch(watch: Watch) {
-        setWatches(watches.filter(w => w !== watch));
+        setWatches(watches && watches.filter(w => w !== watch));
     }
 
     useEffect(() => {
         (async () => setWatches(await fetchWatches()))();
     }, []);
 
+    let content;
+    if (!watches) {
+        content = <p className="has-text-centered">Loading...</p>;
+    } else if (!watches.length) {
+        content = <p className="has-text-centered">No watches added, why not add one from the item search?</p>;
+    } else {
+        content = <table className="table is-striped">
+            <thead>
+            <tr>
+                <th style={{width: "1px"}}/>
+                <th>Item Name</th>
+                <th><em data-tooltip="Lamia Price">Item Min</em></th>
+                <th><em data-tooltip="Lamia Price">Item Max</em></th>
+                <th><em data-tooltip="Datacenter Price">Materials Min</em></th>
+                <th><em data-tooltip="Datacenter Price">Materials Max</em></th>
+                <th>Profit Min</th>
+                <th>Profit Max</th>
+            </tr>
+            </thead>
+            <tbody>
+            {watches.map(watch => <WatchItem
+                key={watch.itemId}
+                onDeleteWatch={onDeleteWatch}
+                watch={watch}
+            />)}
+            </tbody>
+        </table>;
+    }
+
     return <>
-        <main className="content">
-            <table className="table is-striped">
-                <thead>
-                <tr>
-                    <th style={{width: "1px"}}/>
-                    <th>Item Name</th>
-                    <th><em data-tooltip="Lamia Price">Item Min</em></th>
-                    <th><em data-tooltip="Lamia Price">Item Max</em></th>
-                    <th><em data-tooltip="Datacenter Price">Materials Min</em></th>
-                    <th><em data-tooltip="Datacenter Price">Materials Max</em></th>
-                    <th>Profit Min</th>
-                    <th>Profit Max</th>
-                </tr>
-                </thead>
-                <tbody>
-                {watches.map(watch => <WatchItem
-                    key={watch.itemId}
-                    onDeleteWatch={onDeleteWatch}
-                    watch={watch}
-                />)}
-                </tbody>
-            </table>
-        </main>
+        <main className="content">{content}</main>
     </>;
 }
 
