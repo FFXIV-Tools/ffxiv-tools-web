@@ -17,8 +17,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
 
     // Dependency injection
-    implementation("com.google.dagger:dagger:2.39.1")
-    kapt("com.google.dagger:dagger-compiler:2.39.1")
+    implementation("com.google.dagger:dagger:2.40")
+    kapt("com.google.dagger:dagger-compiler:2.40")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.2.6")
@@ -31,7 +31,7 @@ dependencies {
 
     // Database
     implementation("com.zaxxer:HikariCP:5.0.0")
-    implementation("org.postgresql:postgresql:42.2.24")
+    implementation("org.postgresql:postgresql:42.3.1")
     implementation("com.squareup.sqldelight:coroutines-extensions:1.5.2")
     implementation("com.squareup.sqldelight:jdbc-driver:1.5.2")
 

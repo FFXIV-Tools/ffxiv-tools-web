@@ -1,13 +1,14 @@
 package com.dkosub.ffxiv.tools.service
 
-import com.dkosub.ffxiv.tools.enm.DeleteStatus
 import com.dkosub.ffxiv.tools.model.Account
 import com.dkosub.ffxiv.tools.model.response.Material
 import com.dkosub.ffxiv.tools.model.response.Watch
 import com.dkosub.ffxiv.tools.repository.Database
+import com.mchange.rmi.NotAuthorizedException
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
+import io.jooby.exception.NotFoundException
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -24,20 +25,18 @@ class WatchService @Inject constructor(
         return getAll(account)
     }
 
-    suspend fun delete(account: Account, id: Long): DeleteStatus {
+    suspend fun delete(account: Account, id: Long) {
         val result = db.watchQueries.getOwner(id).asFlow()
             .mapToOneOrNull()
             .first()
 
         if (result == null) {
-            return DeleteStatus.NOT_FOUND
+            throw NotFoundException("watch does not exist")
         } else if (account.id != result.account_id) {
-            return DeleteStatus.NOT_AUTHORIZED
+            throw NotAuthorizedException("watch does not belong to account")
         }
 
         db.watchQueries.delete(id)
-
-        return DeleteStatus.DELETED
     }
 
     suspend fun getAll(account: Account) = getAll(account.id, account.datacenterId, account.worldId)

@@ -1,37 +1,33 @@
 package com.dkosub.ffxiv.tools.controller
 
-import com.dkosub.ffxiv.tools.controller.base.Authenticated
 import com.dkosub.ffxiv.tools.model.response.SearchResult
 import com.dkosub.ffxiv.tools.repository.Database
-import com.dkosub.ffxiv.tools.service.AuthService
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import io.jooby.Context
-import io.jooby.StatusCode
 import io.jooby.annotations.GET
 import io.jooby.annotations.Path
-import io.jooby.exception.StatusCodeException
+import io.jooby.exception.BadRequestException
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val LIKE_REPLACE_REGEX = Regex("([%_])")
-
 @Singleton
 @Path("/api/v1/search")
 class SearchController @Inject constructor(
-    authService: AuthService,
     private val db: Database,
-) : Authenticated(authService) {
+) {
     @GET
     suspend fun search(ctx: Context): List<SearchResult> {
+        ctx.validateAccount()
+
         val query = ctx.query("query")
         if (query.isMissing) {
-            throw StatusCodeException(StatusCode.NOT_FOUND)
+            throw BadRequestException("missing 'query' parameter")
         }
 
         val escapedQuery = query.value()
-            .replace(LIKE_REPLACE_REGEX, "\\\\\\\\$1")
+            .replace(Regex("([%_])"), "\\\\\\\\$1")
 
         return db.searchQueries.getResults("%$escapedQuery%").asFlow()
             .mapToList()

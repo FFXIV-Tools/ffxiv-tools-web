@@ -4,8 +4,7 @@ import com.dkosub.ffxiv.tools.model.Account
 import com.dkosub.ffxiv.tools.repository.Database
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
-import io.jooby.StatusCode
-import io.jooby.exception.StatusCodeException
+import io.jooby.exception.UnauthorizedException
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,7 +24,7 @@ class AuthService @Inject constructor(
         val account = db.accountQueries.get(id).asFlow()
             .mapToOneOrNull()
             .first()
-            ?: throw StatusCodeException(StatusCode.UNAUTHORIZED)
+            ?: throw UnauthorizedException("member not found")
 
         return Account(
             id = account.id,
