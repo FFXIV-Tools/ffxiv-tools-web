@@ -14,6 +14,16 @@ import javax.inject.Inject
 class WatchService @Inject constructor(
     private val db: Database
 ) {
+    suspend fun createForItem(account: Account, id: Int): List<Watch> {
+        db.watchQueries.createForItem(id, account.id)
+        return getAll(account)
+    }
+
+    suspend fun createForRecipe(account: Account, id: Int): List<Watch> {
+        db.watchQueries.createForRecipe(id, account.id)
+        return getAll(account)
+    }
+
     suspend fun delete(account: Account, id: Long): DeleteStatus {
         val result = db.watchQueries.getOwner(id).asFlow()
             .mapToOneOrNull()

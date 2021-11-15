@@ -11,8 +11,10 @@ plugins {
 dependencies {
     // Web server
     implementation("io.jooby:jooby-utow:2.11.0")
-    implementation("io.jooby:jooby-jackson:2.11.0")
     kapt("io.jooby:jooby-apt:2.11.0")
+    // Jackson support
+    implementation("io.jooby:jooby-jackson:2.11.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
 
     // Dependency injection
     implementation("com.google.dagger:dagger:2.39.1")

@@ -12,6 +12,12 @@ type Material = {
     worldDeviation: number,
 };
 
+type SearchResult = {
+    id: number,
+    type: string,
+    name: string,
+};
+
 type Watch = {
     id: number,
     itemId: number,

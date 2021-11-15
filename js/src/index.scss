@@ -18,3 +18,43 @@ div.dropdown-item[role="menuitem"] {
     background: $menu-item-hover-background-color;
   }
 }
+
+.search {
+  position: relative;
+}
+
+.search-result {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  background: #fff;
+  border: 1px solid $input-border-color;
+  border-radius: $radius;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: stretch;
+  padding: .2rem;
+
+  &:nth-child(2n) {
+    background: $table-striped-row-even-background-color;
+  }
+
+  &:hover {
+    background: $table-row-active-background-color;
+    color: $table-row-active-color;
+    cursor: pointer;
+  }
+}
+
+.search-result-name {
+  flex: 1;
+}
+
+.search-result-type {
+  flex-shrink: 1;
+}

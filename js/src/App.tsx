@@ -11,16 +11,6 @@ import {authToken} from "./util/cookie";
 const toPercentString = (value: number, decimals: number = 2): string =>
     `${(value * 100).toFixed(decimals)}%`;
 
-const fetchWatches = async (): Promise<Watch[]> => {
-    const response = await fetch("/api/v1/watches", {
-        headers: {
-            Authorization: `Bearer ${authToken()}`,
-        },
-    });
-
-    return await response.json();
-};
-
 type WatchItemProps = {
     onDeleteWatch: (arg0: Watch) => void,
     watch: Watch,
@@ -35,7 +25,7 @@ const WatchItem = ({onDeleteWatch, watch}: WatchItemProps) => {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${authToken()}`,
-            }
+            },
         });
         onDeleteWatch(watch);
     }
@@ -112,17 +102,12 @@ const WatchItem = ({onDeleteWatch, watch}: WatchItemProps) => {
     </tr>;
 };
 
-const WatchList = () => {
-    const [watches, setWatches] = useState<Watch[]>();
+type WatchListProps = {
+    onDeleteWatch: (arg0: Watch) => void,
+    watches: undefined | Watch[]
+};
 
-    function onDeleteWatch(watch: Watch) {
-        setWatches(watches && watches.filter(w => w !== watch));
-    }
-
-    useEffect(() => {
-        (async () => setWatches(await fetchWatches()))();
-    }, []);
-
+const WatchList = ({onDeleteWatch, watches}: WatchListProps) => {
     let content;
     if (!watches) {
         content = <p className="has-text-centered">Loading...</p>;
@@ -159,15 +144,116 @@ const WatchList = () => {
 
 const App = () => {
     const [loggedIn, logOut] = useLoginStatus();
+    const [search, setSearch] = useState<string>("");
+    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+    const [watches, setWatches] = useState<Watch[]>();
 
-    let content;
-    let navbarButtons;
+    async function addWatch(id: number, type: string) {
+        const response = await fetch("/api/v1/watches", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${authToken()}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                id,
+                type: type.toUpperCase()
+            }),
+        });
+
+        setWatches(await response.json());
+    }
+
+    function onDeleteWatch(watch: Watch) {
+        setWatches(watches && watches.filter(w => watch !== w));
+    }
+
+    async function fetchWatches() {
+        const response = await fetch("/api/v1/watches", {
+            headers: {
+                Authorization: `Bearer ${authToken()}`,
+            },
+        });
+
+        setWatches(await response.json());
+    }
+
+    function onSearchChange(e: React.ChangeEvent) {
+        setSearch((e.target as HTMLInputElement).value);
+    }
+
+    useEffect(() => {
+        function onDocumentClick() {
+            setSearchResults([]);
+        }
+
+        fetchWatches();
+
+        document.addEventListener("click", onDocumentClick);
+        return () => document.removeEventListener("click", onDocumentClick);
+    }, []);
+
+    useEffect(() => {
+        if (!search.length) {
+            setSearchResults([]);
+            return;
+        }
+
+        const handle = setTimeout(async () => {
+            const query = encodeURIComponent(search);
+            const response = await fetch(`/api/v1/search?query=${query}`, {
+                headers: {
+                    Authorization: `Bearer ${authToken()}`,
+                },
+            });
+            setSearchResults(await response.json());
+        }, 500);
+
+        return () => clearTimeout(handle);
+    }, [search]);
+
+    let navbarButtons, searchForm, content;
     if (loggedIn) {
+        searchForm = <nav className="level mt-5">
+            <div className="level-item">
+                <form className="search" onSubmit={e => e.preventDefault()}>
+                    <div className="field has-addons mb-0">
+                        <div className="control">
+                            <input
+                                className="input"
+                                onChange={onSearchChange}
+                                placeholder="Search items/recipes..."
+                                style={{width: "400px"}}
+                                type="search"
+                                value={search}
+                            />
+                        </div>
+                        <div className="control">
+                            <button className="button is-primary" type="submit">Search</button>
+                        </div>
+                    </div>
+                    {searchResults.length > 0 && <div className="search-result">
+                        {searchResults.map(result =>
+                            <div
+                                className="search-result-item"
+                                key={`${result.type}:${result.id}`}
+                                onClick={() => addWatch(result.id, result.type)}
+                                role="menuitem"
+                            >
+                                <div className="search-result-name">{result.name}</div>
+                                <div className="search-result-type">{result.type}</div>
+                            </div>
+                        )}
+                    </div>}
+                </form>
+            </div>
+        </nav>;
+
         navbarButtons = <div className="buttons">
             <button className="button is-primary" onClick={logOut}>Log Out</button>
         </div>;
 
-        content = <WatchList/>;
+        content = <WatchList onDeleteWatch={onDeleteWatch} watches={watches}/>;
     } else {
         navbarButtons = <div className="buttons">
             <a href="/auth/redirect" className="button is-primary">Log In</a>
@@ -190,7 +276,8 @@ const App = () => {
                 </div>
             </div>
         </nav>
-        <div className="container mt-5">{content}</div>
+        {searchForm}
+        <div className="container mt-6">{content}</div>
         <div className="footer mt-6">
             <div className="content has-text-centered">Copyright &copy; 2021 FFXIV Tools</div>
         </div>

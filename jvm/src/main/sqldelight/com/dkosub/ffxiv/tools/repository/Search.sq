@@ -1,0 +1,11 @@
+getResults:
+SELECT id, 'Item' AS type, name
+FROM item
+WHERE name LIKE :search
+UNION
+SELECT r.id AS id, 'Recipe' AS type, i.name AS name
+FROM recipe r
+INNER JOIN item i ON r.item_id = i.id
+WHERE i.name LIKE :search
+ORDER BY type ASC, name ASC
+LIMIT 10;
