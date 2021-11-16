@@ -72,6 +72,7 @@ class WatchService @Inject constructor(
                     Material(
                         itemId = it.item_id,
                         name = it.name,
+                        icon = watch.icon,
                         quantity = it.quantity,
                         datacenterMinimum = it.datacenter_minimum,
                         datacenterMean = it.datacenter_mean,
@@ -86,6 +87,7 @@ class WatchService @Inject constructor(
                 id = watch.id!!, // Not sure why SQLDelight views this as nullable?
                 itemId = watch.item_id.toInt(),
                 name = watch.name,
+                icon = watch.icon,
                 datacenterMinimum = watch.datacenter_minimum,
                 datacenterMean = watch.datacenter_mean,
                 datacenterDeviation = watch.datacenter_deviation,

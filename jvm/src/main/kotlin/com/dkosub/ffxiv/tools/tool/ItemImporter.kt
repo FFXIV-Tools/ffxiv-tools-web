@@ -50,7 +50,12 @@ suspend fun main() {
         // Parse all items and insert into the item DB
         readAllAsSequence().forEach {
             val id = it[0].toInt()
-            database.itemQueries.createItem(id, it[10], marketableItems.contains(id))
+            database.itemQueries.createItem(
+                id = it[0].toInt(),
+                name = it[10],
+                icon = it[11].toInt(),
+                marketable = marketableItems.contains(id),
+            )
         }
     }
 }

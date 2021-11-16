@@ -21,7 +21,7 @@ delete:
 DELETE FROM watch WHERE id = :id;
 
 list:
-SELECT w.id, COALESCE(w.item_id, r.item_id, 0) AS item_id, i.name, COALESCE(r.quantity, 1) AS quantity,
+SELECT w.id, COALESCE(w.item_id, r.item_id, 0) AS item_id, i.name, i.icon, COALESCE(r.quantity, 1) AS quantity,
 ipdc.minimum AS datacenter_minimum, ipdc.mean AS datacenter_mean, ipdc.deviation AS datacenter_deviation,
 ipw.minimum AS world_minimum, ipw.mean AS world_mean, ipw.deviation AS world_deviation
 FROM watch w
@@ -32,7 +32,7 @@ INNER JOIN item_prices ipw ON COALESCE(w.item_id, r.item_id) = ipw.item_id AND i
 WHERE w.account_id = :accountId;
 
 listMaterials:
-SELECT w.id AS watch_id, m.item_id, i.name, m.quantity,
+SELECT w.id AS watch_id, m.item_id, i.name, i.icon, m.quantity,
 ipdc.minimum AS datacenter_minimum, ipdc.mean AS datacenter_mean, ipdc.deviation AS datacenter_deviation,
 ipw.minimum AS world_minimum, ipw.mean AS world_mean, ipw.deviation AS world_deviation
 FROM watch w

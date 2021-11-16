@@ -4,6 +4,7 @@ data class Watch(
     val id: Long,
     val itemId: Int,
     val name: String,
+    val icon: Int,
     val datacenterMinimum: Int,
     val datacenterMean: Int,
     val datacenterDeviation: Double,

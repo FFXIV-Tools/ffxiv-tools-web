@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS item
 (
     id         INT            NOT NULL,
     name       TEXT           NOT NULL,
+    icon       INT            NOT NULL,
     marketable INT AS Boolean NOT NULL,
     PRIMARY KEY (id)
 );
@@ -38,7 +39,7 @@ CREATE TABLE IF NOT EXISTS recipe_materials
 );
 
 createItem:
-INSERT INTO item(id, name, marketable) VALUES(?, ?, ?);
+INSERT INTO item(id, name, icon, marketable) VALUES(?, ?, ?, ?);
 
 createRecipe:
 INSERT INTO recipe(id, item_id, quantity) VALUES(?, ?, ?);
