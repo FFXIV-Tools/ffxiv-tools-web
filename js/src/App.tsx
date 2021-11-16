@@ -1,111 +1,150 @@
 import React, {useEffect, useState} from "react";
 
-import CardModal from "./component/modal/CardModal";
-import ConfirmModal from "./component/modal/ConfirmModal";
-import Dropdown from "./component/Dropdown";
+import {getSearchResults} from "./action/search";
+import {createWatch, deleteWatch, getWatches} from "./action/watch";
 
 import {useLoginStatus} from "./hook/auth";
 import {useModal} from "./hook/modal";
-import {authToken} from "./util/cookie";
+
+import CardModal from "./component/modal/CardModal";
+import ConfirmModal from "./component/modal/ConfirmModal";
+import Dropdown from "./component/Dropdown";
+import SortableTable from "./component/SortableTable";
+
+const iconImageSrc = (iconId: number): string => {
+    const icon: string = iconId.toString().padStart(6, "0");
+    return `https://xivapi.com/i/${icon.substr(0, 3)}000/${icon}.png`;
+};
+
+const toLocaleString = (value: number) => value.toLocaleString();
 
 const toPercentString = (value: number, decimals: number = 2): string =>
     `${(value * 100).toFixed(decimals)}%`;
 
-type WatchItemProps = {
+type WatchListProps = {
     onDeleteWatch: (arg0: Watch) => void,
-    watch: Watch,
+    watches: undefined | Watch[],
 };
 
-const WatchItem = ({onDeleteWatch, watch}: WatchItemProps) => {
+const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Watch[] }) => {
+    const [selectedWatch, setSelectedWatch] = useState<Watch>();
     const [materialModalActive, showMaterialModal, hideMaterialModal] = useModal();
     const [deleteModalActive, showDeleteModal, hideDeleteModal] = useModal();
 
-    async function deleteWatch() {
-        await fetch(`/api/v1/watches/${watch.id}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${authToken()}`,
-            },
+    function renderDropdown(watch: Watch) {
+        const items = [];
+        if (watch.materials.length) {
+            items.push({
+                label: "Materials",
+                onClick: () => {
+                    setSelectedWatch(watch);
+                    showMaterialModal();
+                }
+            });
+            items.push(Dropdown.divider());
+        }
+        items.push({
+            label: "Delete",
+            onClick: () => {
+                setSelectedWatch(watch);
+                showDeleteModal();
+            }
         });
-        onDeleteWatch(watch);
+
+        return <Dropdown
+            items={items}
+            label="Actions"
+        />;
     }
 
-    const itemMin = watch.worldMinimum;
-    const itemMax = Math.round(watch.worldMean + watch.worldDeviation);
-    const materialsMin = watch.materials.reduce((sum: number, material: Material) =>
-        sum + material.datacenterMinimum * material.quantity, 0);
-    const materialsMax = Math.round(watch.materials.reduce((sum: number, material: Material) =>
-        sum + (material.datacenterMean + material.datacenterDeviation) * material.quantity, 0));
+    return <>
+        {selectedWatch && <CardModal
+            active={materialModalActive}
+            close={hideMaterialModal}
+            title={`Materials for ${selectedWatch.name}`}
+        >
+            <SortableTable
+                className="is-bordered is-striped"
+                columns={[
+                    {header: "Name", key: "name"},
+                    {header: "Unit Min", key: "minimum", transform: toLocaleString},
+                    {header: "Unit Max", key: "maximum", transform: toLocaleString},
+                    {header: "Quantity", key: "quantity"},
+                ]}
+                data={selectedWatch.materials}
+                deriveKeys={material => {
+                    const minimum = material.datacenterMinimum;
+                    const maximum = Math.round(material.datacenterMean + material.datacenterDeviation);
+                    return {minimum, maximum};
+                }}
+            />
+        </CardModal>}
+        {selectedWatch && <ConfirmModal
+            active={deleteModalActive}
+            close={hideDeleteModal}
+            onYes={async () => {
+                await deleteWatch(selectedWatch);
+                onDeleteWatch(selectedWatch);
+            }}
+            title="Delete Watch"
+        >
+            <p>Stop watching {selectedWatch.name}?</p>
+        </ConfirmModal>}
+        <SortableTable<Watch, {
+            min: number,
+            max: number,
+            materialsMin: number,
+            materialsMax: number,
+            profitMin: number,
+            profitMax: number,
+        }>
+            className="is-striped"
+            columns={[
+                {className: "is-narrow", header: "", render: renderDropdown},
+                {
+                    header: "Item Name",
+                    key: "name",
+                    render: row => <>
+                        <img
+                            className="mr-1"
+                            alt={`Icon for ${row.name}`}
+                            src={iconImageSrc(row.icon)}
+                            style={{height: "30px", verticalAlign: "middle"}}
+                        />
+                        {row.name}
+                    </>
+                },
+                {header: "Item Min", key: "min", tooltip: "Lamia Price", transform: toLocaleString},
+                {header: "Item Max", key: "max", tooltip: "Lamia Price", transform: toLocaleString},
+                {header: "Materials Min", key: "materialsMin", tooltip: "Datacenter Price", transform: toLocaleString},
+                {header: "Materials Max", key: "materialsMax", tooltip: "Datacenter Price", transform: toLocaleString},
+                {
+                    header: "Profit Min",
+                    key: "profitMin",
+                    render: watch => `${watch.profitMin.toLocaleString()} (${toPercentString(watch.profitMin / watch.max)})`
+                },
+                {
+                    header: "Profit Max",
+                    key: "profitMax",
+                    render: watch => `${watch.profitMax.toLocaleString()} (${toPercentString(watch.profitMax / watch.min)})`
+                },
+            ]}
+            data={watches}
+            deriveKeys={watch => {
+                const min = watch.worldMinimum;
+                const max = Math.round(watch.worldMean + watch.worldDeviation);
+                const materialsMin = watch.materials.reduce((sum, m) =>
+                    sum + m.datacenterMinimum * m.quantity, 0);
+                const materialsMax = Math.round(watch.materials.reduce((sum, m) =>
+                    sum + (m.datacenterMean + m.datacenterDeviation) * m.quantity, 0));
+                const profitMin = min - materialsMax;
+                const profitMax = max - materialsMin;
 
-    const minProfit = itemMin - materialsMax;
-    const maxProfit = itemMax - materialsMin;
-    const minProfitPercent = toPercentString((itemMin - materialsMax) / itemMin);
-    const maxProfitPercent = toPercentString((itemMax - materialsMin) / itemMax);
-
-    let materialsDropdownItem;
-    if (watch.materials.length) {
-        materialsDropdownItem = <>
-            <div className="dropdown-item" role="menuitem" onClick={showMaterialModal}>Materials</div>
-            <hr className="dropdown-divider"/>
-        </>;
-    }
-
-    return <tr key={watch.itemId}>
-        <td>
-            <Dropdown label="Actions">
-                <>
-                    {materialsDropdownItem}
-                    <div className="dropdown-item" role="menuitem" onClick={showDeleteModal}>Delete</div>
-                </>
-            </Dropdown>
-            <CardModal active={materialModalActive} close={hideMaterialModal} title={`Materials for ${watch.name}`}>
-                <table className="table is-bordered is-striped">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Unit Minimum</th>
-                        <th>Unit Maximum</th>
-                        <th>Quantity</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {watch.materials.map(material => {
-                        const materialMin = material.datacenterMinimum;
-                        const materialMax = Math.round(material.datacenterMean + material.datacenterDeviation);
-
-                        return <tr key={material.itemId}>
-                            <td>{material.name}</td>
-                            <td>{materialMin.toLocaleString()}</td>
-                            <td>{materialMax.toLocaleString()}</td>
-                            <td>{material.quantity}</td>
-                        </tr>
-                    })}
-                    </tbody>
-                </table>
-            </CardModal>
-            <ConfirmModal
-                active={deleteModalActive}
-                close={hideDeleteModal}
-                onYes={deleteWatch}
-                title="Delete Watch"
-            >
-                <p>Stop watching {watch.name}?</p>
-            </ConfirmModal>
-        </td>
-        <td>{watch.name}</td>
-        <td>{itemMin.toLocaleString()}</td>
-        <td>{itemMax.toLocaleString()}</td>
-        <td>{materialsMin.toLocaleString()}</td>
-        <td>{materialsMax.toLocaleString()}</td>
-        <td>{minProfit.toLocaleString()} ({minProfitPercent})</td>
-        <td>{maxProfit.toLocaleString()} ({maxProfitPercent})</td>
-    </tr>;
-};
-
-type WatchListProps = {
-    onDeleteWatch: (arg0: Watch) => void,
-    watches: undefined | Watch[]
-};
+                return {min, max, materialsMin, materialsMax, profitMin, profitMax};
+            }}
+        />
+    </>;
+}
 
 const WatchList = ({onDeleteWatch, watches}: WatchListProps) => {
     let content;
@@ -114,32 +153,10 @@ const WatchList = ({onDeleteWatch, watches}: WatchListProps) => {
     } else if (!watches.length) {
         content = <p className="has-text-centered">No watches added, why not add one from the item search?</p>;
     } else {
-        content = <table className="table is-striped">
-            <thead>
-            <tr>
-                <th style={{width: "1px"}}/>
-                <th>Item Name</th>
-                <th><em data-tooltip="Lamia Price">Item Min</em></th>
-                <th><em data-tooltip="Lamia Price">Item Max</em></th>
-                <th><em data-tooltip="Datacenter Price">Materials Min</em></th>
-                <th><em data-tooltip="Datacenter Price">Materials Max</em></th>
-                <th>Profit Min</th>
-                <th>Profit Max</th>
-            </tr>
-            </thead>
-            <tbody>
-            {watches.map(watch => <WatchItem
-                key={watch.itemId}
-                onDeleteWatch={onDeleteWatch}
-                watch={watch}
-            />)}
-            </tbody>
-        </table>;
+        content = <WatchListTable onDeleteWatch={onDeleteWatch} watches={watches}/>;
     }
 
-    return <>
-        <main className="content">{content}</main>
-    </>;
+    return <main className="content">{content}</main>;
 }
 
 const App = () => {
@@ -148,34 +165,8 @@ const App = () => {
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [watches, setWatches] = useState<Watch[]>();
 
-    async function addWatch(id: number, type: string) {
-        const response = await fetch("/api/v1/watches", {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${authToken()}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                id,
-                type: type.toUpperCase()
-            }),
-        });
-
-        setWatches(await response.json());
-    }
-
     function onDeleteWatch(watch: Watch) {
-        setWatches(watches && watches.filter(w => watch !== w));
-    }
-
-    async function fetchWatches() {
-        const response = await fetch("/api/v1/watches", {
-            headers: {
-                Authorization: `Bearer ${authToken()}`,
-            },
-        });
-
-        setWatches(await response.json());
+        setWatches(watches && watches.filter(w => watch.id !== w.id));
     }
 
     function onSearchChange(e: React.ChangeEvent) {
@@ -187,7 +178,9 @@ const App = () => {
             setSearchResults([]);
         }
 
-        fetchWatches();
+        (async () => {
+            setWatches(await getWatches());
+        })();
 
         document.addEventListener("click", onDocumentClick);
         return () => document.removeEventListener("click", onDocumentClick);
@@ -200,13 +193,7 @@ const App = () => {
         }
 
         const handle = setTimeout(async () => {
-            const query = encodeURIComponent(search);
-            const response = await fetch(`/api/v1/search?query=${query}`, {
-                headers: {
-                    Authorization: `Bearer ${authToken()}`,
-                },
-            });
-            setSearchResults(await response.json());
+            setSearchResults(await getSearchResults(search));
         }, 500);
 
         return () => clearTimeout(handle);
@@ -237,7 +224,7 @@ const App = () => {
                             <div
                                 className="search-result-item"
                                 key={`${result.type}:${result.id}`}
-                                onClick={() => addWatch(result.id, result.type)}
+                                onClick={async () => setWatches(await createWatch(result.id, result.type))}
                                 role="menuitem"
                             >
                                 <div className="search-result-name">{result.name}</div>

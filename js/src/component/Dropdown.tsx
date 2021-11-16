@@ -1,17 +1,18 @@
 import React, {useEffect, useRef, useState} from "react";
 
+export type DropdownItem = {
+    label?: string,
+    onClick?: () => void,
+};
+
 export type DropdownProps = {
-    children: JSX.Element | JSX.Element[],
+    items: DropdownItem[],
     label: string | JSX.Element | JSX.Element[],
 };
 
-const Dropdown = ({children, label}: DropdownProps) => {
+const Dropdown = ({items, label}: DropdownProps) => {
     const [active, setActive] = useState<boolean>(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
-
-    function onButtonClick() {
-        setActive(!active);
-    }
 
     function onDocumentClick(e: MouseEvent) {
         if (e.target !== buttonRef.current) {
@@ -26,14 +27,34 @@ const Dropdown = ({children, label}: DropdownProps) => {
 
     return <div className={`dropdown ${active ? "is-active" : ""}`}>
         <div className="dropdown-trigger">
-            <button className="button is-small" onClick={onButtonClick} ref={buttonRef}>
-                {label}
-            </button>
+            <button
+                children={label}
+                className="button is-small"
+                aria-haspopup="true"
+                onClick={() => setActive(!active)}
+                ref={buttonRef}
+            />
         </div>
         <div className="dropdown-menu" role="menu">
-            <div className="dropdown-content">{children}</div>
+            <div className="dropdown-content">
+                {items.map(({label, onClick}, index) => {
+                    if (!label) {
+                        return <hr key={index} className="dropdown-divider"/>;
+                    }
+
+                    return <div
+                        children={label}
+                        className="dropdown-item"
+                        key={index}
+                        role="menuitem"
+                        onClick={onClick}
+                    />
+                })}
+            </div>
         </div>
     </div>;
 };
+
+Dropdown.divider = (): DropdownItem => ({});
 
 export default Dropdown;

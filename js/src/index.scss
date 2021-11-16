@@ -1,10 +1,24 @@
 @import "~bulma/bulma";
 @import "~bulma-tooltip/src/sass";
 
+th.is-narrow {
+  width: 1px;
+}
+th.is-sortable {
+  cursor: pointer;
+}
+
+// Fix tooltips that are in table headers
+th > [data-tooltip]:before {
+  font-weight: normal;
+}
+
+// For some reason Bulma wants table contents top aligned
 .content table td {
   vertical-align: middle;
 }
 
+// Make em now be a tooltip vessel
 em {
   font-style: normal;
   text-decoration: underline;

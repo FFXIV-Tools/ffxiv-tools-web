@@ -1,8 +1,13 @@
 /// <reference types="react-scripts" />
 
+type Assignable = {
+    [key: string]: any,
+};
+
 type Material = {
     itemId: number,
     name: string,
+    icon: number,
     quantity: number,
     datacenterMinimum: number,
     datacenterMean: number,
@@ -22,6 +27,7 @@ type Watch = {
     id: number,
     itemId: number,
     name: string,
+    icon: number,
     datacenterMinimum: number,
     datacenterMean: number,
     datacenterDeviation: number,
