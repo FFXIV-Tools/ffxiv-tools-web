@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 
 export type DropdownItem = {
+    icon?: string,
     label?: string,
     onClick?: () => void,
 };
@@ -37,13 +38,17 @@ const Dropdown = ({items, label}: DropdownProps) => {
         </div>
         <div className="dropdown-menu" role="menu">
             <div className="dropdown-content">
-                {items.map(({label, onClick}, index) => {
+                {items.map(({icon, label, onClick}, index) => {
                     if (!label) {
                         return <hr key={index} className="dropdown-divider"/>;
                     }
 
+                    let children = icon
+                        ? <><span className="icon"><i className={icon}/></span> {label}</>
+                        : label;
+
                     return <div
-                        children={label}
+                        children={children}
                         className="dropdown-item"
                         key={index}
                         role="menuitem"

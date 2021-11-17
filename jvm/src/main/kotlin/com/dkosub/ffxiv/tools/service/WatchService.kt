@@ -72,7 +72,7 @@ class WatchService @Inject constructor(
                     Material(
                         itemId = it.item_id,
                         name = it.name,
-                        icon = watch.icon,
+                        icon = it.icon,
                         quantity = it.quantity,
                         datacenterMinimum = it.datacenter_minimum,
                         datacenterMean = it.datacenter_mean,

@@ -35,6 +35,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
         const items = [];
         if (watch.materials.length) {
             items.push({
+                icon: "fas fa-shopping-cart",
                 label: "Materials",
                 onClick: () => {
                     setSelectedWatch(watch);
@@ -44,6 +45,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
             items.push(Dropdown.divider());
         }
         items.push({
+            icon: "fas fa-trash",
             label: "Delete",
             onClick: () => {
                 setSelectedWatch(watch);
@@ -66,7 +68,19 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
             <SortableTable
                 className="is-bordered is-striped"
                 columns={[
-                    {header: "Name", key: "name"},
+                    {
+                        header: "Name",
+                        key: "name",
+                        render: row => <>
+                            <img
+                                className="mr-1"
+                                alt={`Icon for ${row.name}`}
+                                src={iconImageSrc(row.icon)}
+                                style={{height: "30px", verticalAlign: "middle"}}
+                            />
+                            {row.name}
+                        </>,
+                    },
                     {header: "Unit Min", key: "minimum", transform: toLocaleString},
                     {header: "Unit Max", key: "maximum", transform: toLocaleString},
                     {header: "Quantity", key: "quantity"},
@@ -112,7 +126,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                             style={{height: "30px", verticalAlign: "middle"}}
                         />
                         {row.name}
-                    </>
+                    </>,
                 },
                 {header: "Item Min", key: "min", tooltip: "Lamia Price", transform: toLocaleString},
                 {header: "Item Max", key: "max", tooltip: "Lamia Price", transform: toLocaleString},

@@ -80,6 +80,7 @@ export default function SortableTable<T, D>(props: SortableTableProps<T, D>) {
                             ? <i className="fas fa-sort-up"/>
                             : <i className="fas fa-sort-down"/>;
                     }
+                    icon = <span className="icon">{icon}</span>;
                 }
 
                 return <th className={className} key={index} {...props}>{header} {icon}</th>;
