@@ -1,5 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 
+import Icon from "./Icon";
+
 export type DropdownItem = {
     icon?: string,
     label?: string,
@@ -44,7 +46,7 @@ const Dropdown = ({items, label}: DropdownProps) => {
                     }
 
                     let children = icon
-                        ? <><span className="icon"><i className={icon}/></span> {label}</>
+                        ? <><Icon name={icon}/> {label}</>
                         : label;
 
                     return <div

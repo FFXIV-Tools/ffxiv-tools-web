@@ -35,7 +35,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
         const items = [];
         if (watch.materials.length) {
             items.push({
-                icon: "fas fa-shopping-cart",
+                icon: "shopping-cart",
                 label: "Materials",
                 onClick: () => {
                     setSelectedWatch(watch);
@@ -45,7 +45,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
             items.push(Dropdown.divider());
         }
         items.push({
-            icon: "fas fa-trash",
+            icon: "trash",
             label: "Delete",
             onClick: () => {
                 setSelectedWatch(watch);

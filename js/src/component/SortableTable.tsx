@@ -1,5 +1,7 @@
 import React, {useMemo, useState} from "react";
 
+import Icon from "./Icon";
+
 type Settings = {
     dir: number,
     key?: string,
@@ -74,13 +76,12 @@ export default function SortableTable<T, D>(props: SortableTableProps<T, D>) {
 
                 let icon;
                 if (isSortable) {
-                    icon = <i className="fas fa-sort"/>;
+                    icon = <Icon name="sort"/>;
                     if (key === settings.key) {
                         icon = settings.dir === 1
-                            ? <i className="fas fa-sort-up"/>
-                            : <i className="fas fa-sort-down"/>;
+                            ? <Icon name="sort-up"/>
+                            : <Icon name="sort-down"/>;
                     }
-                    icon = <span className="icon">{icon}</span>;
                 }
 
                 return <th className={className} key={index} {...props}>{header} {icon}</th>;
