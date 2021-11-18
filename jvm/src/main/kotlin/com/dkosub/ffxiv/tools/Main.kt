@@ -1,5 +1,6 @@
 package com.dkosub.ffxiv.tools
 
+import com.dkosub.ffxiv.tools.config.DatabaseConfig
 import com.dkosub.ffxiv.tools.controller.AuthController
 import com.dkosub.ffxiv.tools.controller.SearchController
 import com.dkosub.ffxiv.tools.controller.WatchController
@@ -11,14 +12,25 @@ import com.dkosub.ffxiv.tools.service.AuthService
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import dagger.Component
+import io.jooby.Cookie
+import io.jooby.SessionToken
 import io.jooby.json.JacksonModule
 import io.jooby.quartz.QuartzModule
+import io.jooby.redis.RedisModule
+import io.jooby.redis.RedisSessionStore
+import io.jooby.require
 import io.jooby.runApp
+import io.lettuce.core.RedisClient
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.days
+import kotlin.time.toJavaDuration
 
 @Singleton
 @Component(modules = [ConfigurationModule::class, DatabaseModule::class, HttpClientModule::class])
 interface Application {
+    // Config
+    fun databaseConfig(): DatabaseConfig
+
     // Controllers
     fun authController(): AuthController
     fun searchController(): SearchController
@@ -39,6 +51,14 @@ fun main(args: Array<String>) {
         services.put(AuthService::class.java, dagger.authService())
         services.put(KotlinModule::class.java, kotlinModule())
         services.put(UniversalisJob::class.java, dagger.universalisJob())
+
+        // Session management
+        install(RedisModule(dagger.databaseConfig().redisUri()))
+
+        sessionStore = RedisSessionStore(require<RedisClient>()).apply {
+            timeout = 30.days.toJavaDuration()
+            token = SessionToken.signedCookie(Cookie("session"))
+        }
 
         // Configure JSON (de)serialization
         install(JacksonModule().module(KotlinModule::class.java))

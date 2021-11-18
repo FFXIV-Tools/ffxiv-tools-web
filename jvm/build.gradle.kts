@@ -15,6 +15,8 @@ dependencies {
     // Jackson support
     implementation("io.jooby:jooby-jackson:2.11.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+    // Session management
+    implementation("io.jooby:jooby-redis:2.11.0")
 
     // Dependency injection
     implementation("com.google.dagger:dagger:2.40")
@@ -22,9 +24,6 @@ dependencies {
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.2.6")
-
-    // Security
-    implementation("com.auth0:java-jwt:3.18.2")
 
     // Scheduling
     implementation("io.jooby:jooby-quartz:2.11.0")

@@ -6,17 +6,14 @@ import io.jooby.Context
 import io.jooby.exception.UnauthorizedException
 import io.jooby.require
 
-private val BEARER_REGEX = Regex("^Bearer (.*)$")
-
 suspend fun Context.validateAccount(): Account {
-    val authHeader = this.header().get("Authorization")
-    if (authHeader.isMissing) {
-        throw UnauthorizedException("missing 'Authorization' header")
+    val session = this.sessionOrNull()
+        ?: throw UnauthorizedException("session not found")
+
+    val id = session.get("id")
+    if (id.isMissing) {
+        throw UnauthorizedException("id missing from session")
     }
 
-    val matchResult = BEARER_REGEX.find(authHeader.toString())
-        ?: throw UnauthorizedException("invalid bearer")
-    val (token) = matchResult.destructured
-
-    return this.require<AuthService>().verifyAccount(token)
+    return this.require<AuthService>().getAccount(id.longValue())
 }

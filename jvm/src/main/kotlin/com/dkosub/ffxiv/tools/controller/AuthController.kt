@@ -3,7 +3,6 @@ package com.dkosub.ffxiv.tools.controller
 import com.dkosub.ffxiv.tools.config.OAuthConfig
 import com.dkosub.ffxiv.tools.service.AuthService
 import io.jooby.Context
-import io.jooby.Cookie
 import io.jooby.annotations.GET
 import io.jooby.annotations.Path
 import io.ktor.client.*
@@ -23,6 +22,13 @@ class AuthController @Inject constructor(
     private val authorizeUrl = oAuthConfig.authorizeUrl()
     private val redirectUrl = oAuthConfig.redirectUrl()
     private val tokenUrl = oAuthConfig.tokenUrl()
+
+    @GET
+    @Path("/auth/logout")
+    fun logout(ctx: Context) {
+        ctx.session().destroy()
+        ctx.sendRedirect("/")
+    }
 
     @GET
     @Path("/auth/redirect")
@@ -55,8 +61,9 @@ class AuthController @Inject constructor(
             header("Authorization", "${tokenResponse["token_type"]} ${tokenResponse["access_token"]}")
         }
 
-        val jwt = authService.loginAccount(userResponse["id"]!!.toLong())
-        ctx.setResponseCookie(Cookie("jwt", jwt))
+        val id = userResponse["id"]!!.toLong()
+        authService.loginAccount(id)
+        ctx.session().put("id", id)
         ctx.sendRedirect("/")
     }
 }

@@ -2,8 +2,8 @@ import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
-export function authToken(): string | undefined {
-    return getCookie("jwt");
+export function isLoggedIn(): boolean {
+    return !!getCookie("session");
 }
 
 export function getCookie(name: string): string | undefined {

@@ -7,4 +7,5 @@ class DatabaseConfig {
     fun databaseName(): String = System.getenv("DATABASE_NAME")
     fun username(): String = System.getenv("DATABASE_USERNAME")
     fun password(): String = System.getenv("DATABASE_PASSWORD")
+    fun redisUri(): String = System.getenv("REDIS_URI")
 }

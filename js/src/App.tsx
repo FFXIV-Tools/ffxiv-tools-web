@@ -3,13 +3,14 @@ import React, {useEffect, useState} from "react";
 import {getSearchResults} from "./action/search";
 import {createWatch, deleteWatch, getWatches} from "./action/watch";
 
-import {useLoginStatus} from "./hook/auth";
 import {useModal} from "./hook/modal";
 
 import CardModal from "./component/modal/CardModal";
 import ConfirmModal from "./component/modal/ConfirmModal";
 import Dropdown from "./component/Dropdown";
 import SortableTable from "./component/SortableTable";
+
+import {isLoggedIn} from "./util/cookie";
 
 const iconImageSrc = (iconId: number): string => {
     const icon: string = iconId.toString().padStart(6, "0");
@@ -174,7 +175,6 @@ const WatchList = ({onDeleteWatch, watches}: WatchListProps) => {
 }
 
 const App = () => {
-    const [loggedIn, logOut] = useLoginStatus();
     const [search, setSearch] = useState<string>("");
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [watches, setWatches] = useState<Watch[]>();
@@ -214,7 +214,7 @@ const App = () => {
     }, [search]);
 
     let navbarButtons, searchForm, content;
-    if (loggedIn) {
+    if (isLoggedIn()) {
         searchForm = <nav className="level mt-5">
             <div className="level-item">
                 <form className="search" onSubmit={e => e.preventDefault()}>
@@ -251,7 +251,7 @@ const App = () => {
         </nav>;
 
         navbarButtons = <div className="buttons">
-            <button className="button is-primary" onClick={logOut}>Log Out</button>
+            <a href="/auth/logout" className="button is-primary">Log Out</a>
         </div>;
 
         content = <WatchList onDeleteWatch={onDeleteWatch} watches={watches}/>;
