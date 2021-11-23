@@ -36,7 +36,8 @@ class SearchController @Inject constructor(
                 SearchResult(
                     id = it.id.toLong(),
                     type = it.type,
-                    name = it.name
+                    icon = it.icon,
+                    name = it.name,
                 )
             }
     }

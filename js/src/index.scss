@@ -67,6 +67,11 @@ div.dropdown-item[role="menuitem"] {
 
 .search-result-name {
   flex: 1;
+
+  > img {
+    margin-right: 5px;
+    width: 24px;
+  }
 }
 
 .search-result-type {

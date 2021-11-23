@@ -8,14 +8,15 @@ import {useModal} from "./hook/modal";
 import CardModal from "./component/modal/CardModal";
 import ConfirmModal from "./component/modal/ConfirmModal";
 import Dropdown from "./component/Dropdown";
+import Icon from "./component/Icon";
 import SortableTable from "./component/SortableTable";
 
-import {isLoggedIn} from "./util/cookie";
+import MainNavigation from "./container/MainNavigation";
 
-const iconImageSrc = (iconId: number): string => {
-    const icon: string = iconId.toString().padStart(6, "0");
-    return `https://xivapi.com/i/${icon.substr(0, 3)}000/${icon}.png`;
-};
+import {isLoggedIn} from "./util/cookie";
+import {iconImageSrc} from "./util/xivapi";
+
+const GST = 1.05;
 
 const toLocaleString = (value: number) => value.toLocaleString();
 
@@ -72,7 +73,11 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                     {
                         header: "Name",
                         key: "name",
-                        render: row => <>
+                        render: row => <a
+                            href={`https://universalis.app/market/${row.itemId}`}
+                            rel="noreferrer"
+                            target="_blank"
+                        >
                             <img
                                 className="mr-1"
                                 alt={`Icon for ${row.name}`}
@@ -80,16 +85,16 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                                 style={{height: "30px", verticalAlign: "middle"}}
                             />
                             {row.name}
-                        </>,
+                        </a>,
                     },
                     {header: "Unit Min", key: "minimum", transform: toLocaleString},
                     {header: "Unit Max", key: "maximum", transform: toLocaleString},
-                    {header: "Quantity", key: "quantity"},
+                    {header: "Quantity", key: "quantity", sortable: false},
                 ]}
                 data={selectedWatch.materials}
                 deriveKeys={material => {
-                    const minimum = material.datacenterMinimum;
-                    const maximum = Math.round(material.datacenterMean + material.datacenterDeviation);
+                    const minimum = Math.round(material.datacenterMinimum * GST);
+                    const maximum = Math.round(material.datacenterMean + material.datacenterDeviation * GST);
                     return {minimum, maximum};
                 }}
             />
@@ -119,7 +124,11 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                 {
                     header: "Item Name",
                     key: "name",
-                    render: row => <>
+                    render: row => <a
+                        href={`https://universalis.app/market/${row.itemId}`}
+                        rel="noreferrer"
+                        target="_blank"
+                    >
                         <img
                             className="mr-1"
                             alt={`Icon for ${row.name}`}
@@ -127,7 +136,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                             style={{height: "30px", verticalAlign: "middle"}}
                         />
                         {row.name}
-                    </>,
+                    </a>,
                 },
                 {header: "Item Min", key: "min", tooltip: "Lamia Price", transform: toLocaleString},
                 {header: "Item Max", key: "max", tooltip: "Lamia Price", transform: toLocaleString},
@@ -148,10 +157,10 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
             deriveKeys={watch => {
                 const min = watch.worldMinimum;
                 const max = Math.round(watch.worldMean + watch.worldDeviation);
-                const materialsMin = watch.materials.reduce((sum, m) =>
-                    sum + m.datacenterMinimum * m.quantity, 0);
+                const materialsMin = Math.round(watch.materials.reduce((sum, m) =>
+                    sum + m.datacenterMinimum * m.quantity, 0) * GST);
                 const materialsMax = Math.round(watch.materials.reduce((sum, m) =>
-                    sum + (m.datacenterMean + m.datacenterDeviation) * m.quantity, 0));
+                    sum + (m.datacenterMean + m.datacenterDeviation) * m.quantity, 0) * GST);
                 const profitMin = min - materialsMax;
                 const profitMax = max - materialsMin;
 
@@ -213,7 +222,7 @@ const App = () => {
         return () => clearTimeout(handle);
     }, [search]);
 
-    let navbarButtons, searchForm, content;
+    let searchForm, content;
     if (isLoggedIn()) {
         searchForm = <nav className="level mt-5">
             <div className="level-item">
@@ -230,7 +239,10 @@ const App = () => {
                             />
                         </div>
                         <div className="control">
-                            <button className="button is-primary" type="submit">Search</button>
+                            <button className="button is-primary" type="submit">
+                                <Icon name="search"/>
+                                <span>Search</span>
+                            </button>
                         </div>
                     </div>
                     {searchResults.length > 0 && <div className="search-result">
@@ -241,7 +253,13 @@ const App = () => {
                                 onClick={async () => setWatches(await createWatch(result.id, result.type))}
                                 role="menuitem"
                             >
-                                <div className="search-result-name">{result.name}</div>
+                                <div className="search-result-name">
+                                    <img
+                                        src={iconImageSrc(result.icon)}
+                                        alt={`Icon for ${result.name}`}
+                                    />
+                                    {result.name}
+                                </div>
                                 <div className="search-result-type">{result.type}</div>
                             </div>
                         )}
@@ -250,33 +268,13 @@ const App = () => {
             </div>
         </nav>;
 
-        navbarButtons = <div className="buttons">
-            <a href="/auth/logout" className="button is-primary">Log Out</a>
-        </div>;
-
         content = <WatchList onDeleteWatch={onDeleteWatch} watches={watches}/>;
     } else {
-        navbarButtons = <div className="buttons">
-            <a href="/auth/redirect" className="button is-primary">Log In</a>
-        </div>;
-
         content = <p className="has-text-centered">Please log in to use features on this site.</p>;
     }
 
     return <>
-        <nav className="navbar is-fixed-top has-shadow" role="navigation" aria-label="main navigation">
-            <div className="navbar-brand">
-                <a href="/" className="navbar-item">FFXIV Tools</a>
-            </div>
-            <div className="navbar-menu">
-                <div className="navbar-start">
-                    <a href="/" className="navbar-item">Watched Items</a>
-                </div>
-                <div className="navbar-end">
-                    <div className="navbar-item">{navbarButtons}</div>
-                </div>
-            </div>
-        </nav>
+        <MainNavigation/>
         {searchForm}
         <div className="container mt-6">{content}</div>
         <div className="footer mt-6">

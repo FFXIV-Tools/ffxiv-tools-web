@@ -1,5 +1,12 @@
 /// <reference types="react-scripts" />
 
+type Account = {
+    id: Long,
+    name: String,
+    datacenterId: Int,
+    worldId: Int,
+};
+
 type Assignable = {
     [key: string]: any,
 };
@@ -20,6 +27,7 @@ type Material = {
 type SearchResult = {
     id: number,
     type: string,
+    icon: number,
     name: string,
 };
 

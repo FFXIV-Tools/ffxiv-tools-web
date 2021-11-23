@@ -17,7 +17,7 @@ export type SortableTableProps<T, D> = {
     className?: string,
     columns: {
         className?: string,
-        header: string,
+        header: string | JSX.Element,
         key?: string,
         render?: (arg0: T & D) => string | JSX.Element,
         sortable?: boolean,
@@ -71,7 +71,7 @@ export default function SortableTable<T, D>(props: SortableTableProps<T, D>) {
                     props.onClick = () => onColumnClick(key);
                 }
                 if (tooltip) {
-                    props["data-tooltip"] = tooltip;
+                    header = <em data-tooltip={tooltip}>{header}</em>;
                 }
 
                 let icon;

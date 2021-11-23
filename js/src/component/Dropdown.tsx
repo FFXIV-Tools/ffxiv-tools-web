@@ -18,7 +18,7 @@ const Dropdown = ({items, label}: DropdownProps) => {
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     function onDocumentClick(e: MouseEvent) {
-        if (e.target !== buttonRef.current) {
+        if (!buttonRef.current?.contains(e.target as Node)) {
             setActive(false);
         }
     }
@@ -31,12 +31,14 @@ const Dropdown = ({items, label}: DropdownProps) => {
     return <div className={`dropdown ${active ? "is-active" : ""}`}>
         <div className="dropdown-trigger">
             <button
-                children={label}
                 className="button is-small"
                 aria-haspopup="true"
                 onClick={() => setActive(!active)}
                 ref={buttonRef}
-            />
+            >
+                <span>{label}</span>
+                <Icon className="is-small" name="angle-down"/>
+            </button>
         </div>
         <div className="dropdown-menu" role="menu">
             <div className="dropdown-content">
