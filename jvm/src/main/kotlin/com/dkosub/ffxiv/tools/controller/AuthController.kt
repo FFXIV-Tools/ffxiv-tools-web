@@ -12,6 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+@Path("/auth")
 class AuthController @Inject constructor(
     oAuthConfig: OAuthConfig,
     private val authService: AuthService,
@@ -24,27 +25,6 @@ class AuthController @Inject constructor(
     private val tokenUrl = oAuthConfig.tokenUrl()
 
     @GET
-    @Path("/auth/logout")
-    fun logout(ctx: Context) {
-        ctx.session().destroy()
-        ctx.sendRedirect("/")
-    }
-
-    @GET
-    @Path("/auth/redirect")
-    fun redirect(ctx: Context) {
-        val queryString = listOf(
-            "client_id" to clientId,
-            "redirect_uri" to redirectUrl,
-            "response_type" to "code",
-            "scope" to "identify",
-        ).formUrlEncode()
-
-        ctx.sendRedirect("${authorizeUrl}?${queryString}")
-    }
-
-    @GET
-    @Path("/auth")
     suspend fun authenticate(ctx: Context) {
         val tokenResponse: Map<String, String> = client.post(tokenUrl) {
             contentType(ContentType.Application.FormUrlEncoded)
@@ -65,5 +45,23 @@ class AuthController @Inject constructor(
         authService.loginAccount(id)
         ctx.session().put("id", id)
         ctx.sendRedirect("/")
+    }
+
+    @GET("/logout")
+    fun logout(ctx: Context) {
+        ctx.session().destroy()
+        ctx.sendRedirect("/")
+    }
+
+    @GET("/redirect")
+    fun redirect(ctx: Context) {
+        val queryString = listOf(
+            "client_id" to clientId,
+            "redirect_uri" to redirectUrl,
+            "response_type" to "code",
+            "scope" to "identify",
+        ).formUrlEncode()
+
+        ctx.sendRedirect("${authorizeUrl}?${queryString}")
     }
 }

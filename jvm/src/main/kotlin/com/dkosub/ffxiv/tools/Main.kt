@@ -1,6 +1,7 @@
 package com.dkosub.ffxiv.tools
 
 import com.dkosub.ffxiv.tools.config.DatabaseConfig
+import com.dkosub.ffxiv.tools.controller.AccountController
 import com.dkosub.ffxiv.tools.controller.AuthController
 import com.dkosub.ffxiv.tools.controller.SearchController
 import com.dkosub.ffxiv.tools.controller.WatchController
@@ -32,6 +33,7 @@ interface Application {
     fun databaseConfig(): DatabaseConfig
 
     // Controllers
+    fun accountController(): AccountController
     fun authController(): AuthController
     fun searchController(): SearchController
     fun watchController(): WatchController
@@ -67,6 +69,7 @@ fun main(args: Array<String>) {
         install(QuartzModule(UniversalisJob::class.java))
 
         coroutine {
+            mvc(dagger.accountController())
             mvc(dagger.authController())
             mvc(dagger.searchController())
             mvc(dagger.watchController())
