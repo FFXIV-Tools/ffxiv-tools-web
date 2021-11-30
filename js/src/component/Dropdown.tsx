@@ -9,11 +9,12 @@ export type DropdownItem = {
 };
 
 export type DropdownProps = {
+    className?: string,
     items: DropdownItem[],
     label: string | JSX.Element | JSX.Element[],
 };
 
-const Dropdown = ({items, label}: DropdownProps) => {
+const Dropdown = ({className, items, label}: DropdownProps) => {
     const [active, setActive] = useState<boolean>(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -31,7 +32,7 @@ const Dropdown = ({items, label}: DropdownProps) => {
     return <div className={`dropdown ${active ? "is-active" : ""}`}>
         <div className="dropdown-trigger">
             <button
-                className="button is-small"
+                className={`button ${className || ""}`}
                 aria-haspopup="true"
                 onClick={() => setActive(!active)}
                 ref={buttonRef}

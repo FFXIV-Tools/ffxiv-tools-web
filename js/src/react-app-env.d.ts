@@ -2,7 +2,7 @@
 
 type Account = {
     id: Long,
-    name: String,
+    name: string,
     datacenterId: Int,
     worldId: Int,
 };

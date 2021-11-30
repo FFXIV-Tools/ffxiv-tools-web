@@ -1,39 +1,58 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 
 import Icon from "../component/Icon";
 
-import {isLoggedIn} from "../util/cookie";
+import {useAccount} from "../hook/globalContext";
 
 const MainNavigation = () => {
-    let logInOut;
-    if (isLoggedIn()) {
-        logInOut = <div className="buttons">
-            <a href="/auth/logout" className="button is-primary">
-                <Icon name="sign-out-alt"/>
-                <span>Sign Out</span>
-            </a>
+    const [account] = useAccount();
+    const [menuActive, setMenuActive] = useState(false);
+
+    useEffect(() => {
+        const onDocumentClick = () => setMenuActive(false);
+        document.addEventListener("click", onDocumentClick);
+        return () => document.removeEventListener("click", onDocumentClick);
+    }, []);
+
+    let navbarEnd;
+    if (account) {
+        navbarEnd = <div className={`navbar-item has-dropdown ${menuActive ? "is-active" : ""}`}>
+            <div
+                children={account.name || "New User"}
+                className="navbar-link"
+                onClick={e => {
+                    e.stopPropagation();
+                    setMenuActive(!menuActive);
+                }}
+            />
+            <div className="navbar-dropdown">
+                <Link className="navbar-item" to="/settings">Settings</Link>
+                <hr className="navbar-divider"/>
+                <a className="navbar-item" href="/auth/logout">Log Out</a>
+            </div>
         </div>;
     } else {
-        logInOut = <div className="buttons">
-            <a href="/auth/redirect" className="button is-primary">
-                <Icon name="sign-in-alt"/>
-                <span>Sign In</span>
-            </a>
+        navbarEnd = <div className="navbar-item">
+            <div className="buttons">
+                <a href="/auth/redirect" className="button is-primary">
+                    <Icon name="sign-in-alt"/>
+                    <span>Sign In</span>
+                </a>
+            </div>
         </div>;
     }
 
     return (
         <nav className="navbar is-fixed-top has-shadow" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
-                <a href="/" className="navbar-item">FFXIV Tools</a>
+                <Link to="/" className="navbar-item">FFXIV Tools</Link>
             </div>
             <div className="navbar-menu">
                 <div className="navbar-start">
-                    <a href="/" className="navbar-item">Watched Items</a>
+                    <Link to="/watches" className="navbar-item">Watched Items</Link>
                 </div>
-                <div className="navbar-end">
-                    <div className="navbar-item">{logInOut}</div>
-                </div>
+                <div className="navbar-end">{navbarEnd}</div>
             </div>
         </nav>
     );
