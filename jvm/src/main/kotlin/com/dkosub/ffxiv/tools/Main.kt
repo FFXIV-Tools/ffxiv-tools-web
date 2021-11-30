@@ -13,14 +13,11 @@ import com.dkosub.ffxiv.tools.service.AuthService
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import dagger.Component
-import io.jooby.Cookie
-import io.jooby.SessionToken
+import io.jooby.*
 import io.jooby.json.JacksonModule
 import io.jooby.quartz.QuartzModule
 import io.jooby.redis.RedisModule
 import io.jooby.redis.RedisSessionStore
-import io.jooby.require
-import io.jooby.runApp
 import io.lettuce.core.RedisClient
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.days
@@ -67,6 +64,9 @@ fun main(args: Array<String>) {
 
         // Configure scheduled tasks
         install(QuartzModule(UniversalisJob::class.java))
+
+        // Access logging
+        decorator(AccessLogHandler())
 
         coroutine {
             mvc(dagger.accountController())

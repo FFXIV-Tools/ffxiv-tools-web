@@ -10,5 +10,10 @@ CREATE TABLE IF NOT EXISTS account
 get:
 SELECT * FROM account WHERE id = :id;
 
+update:
+UPDATE account
+SET name = :name, datacenter_id = :datacenterId, world_id = :worldId
+WHERE id = :id;
+
 upsert:
 INSERT INTO account(id) VALUES(:id) ON CONFLICT DO NOTHING;

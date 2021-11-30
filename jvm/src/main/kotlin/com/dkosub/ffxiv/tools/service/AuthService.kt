@@ -1,6 +1,7 @@
 package com.dkosub.ffxiv.tools.service
 
 import com.dkosub.ffxiv.tools.model.Account
+import com.dkosub.ffxiv.tools.model.asModel
 import com.dkosub.ffxiv.tools.repository.Database
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
@@ -19,12 +20,7 @@ class AuthService @Inject constructor(
             .first()
             ?: throw UnauthorizedException("member not found")
 
-        return Account(
-            id = account.id,
-            name = account.name,
-            datacenterId = account.datacenter_id,
-            worldId = account.world_id,
-        )
+        return account.asModel()
     }
 
     fun loginAccount(id: Long) {
