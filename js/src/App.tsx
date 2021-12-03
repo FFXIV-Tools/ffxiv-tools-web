@@ -1,5 +1,5 @@
 import React from "react";
-import {Route, Routes} from "react-router-dom";
+import {Link, Route, Routes} from "react-router-dom";
 
 import RequiresAccount from "./component/guard/RequiresAccount";
 import RequiresCharacter from "./component/guard/RequiresCharacter";
@@ -17,6 +17,13 @@ const App = () => {
         <MainNavigation/>
         <div className="container mt-6">
             <Routes>
+                <Route index element={
+                    <RequiresAccount>
+                        <p className="has-text-centered">Yeah there's nothing actually on this page, go to <Link
+                            to="/watches">watched items</Link> since it's the only thing available on this site so far.
+                        </p>
+                    </RequiresAccount>
+                }/>
                 <Route path="settings" element={
                     <RequiresAccount>
                         <Settings/>
