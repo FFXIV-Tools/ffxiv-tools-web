@@ -7,8 +7,6 @@ CREATE TABLE IF NOT EXISTS item
     PRIMARY KEY (id)
 );
 
-CREATE INDEX item_name_index ON item (name);
-
 CREATE TABLE IF NOT EXISTS item_prices
 (
     item_id       INT  NOT NULL REFERENCES item (id) ON DELETE CASCADE NOT NULL,
