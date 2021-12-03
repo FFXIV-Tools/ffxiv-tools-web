@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,6 +6,7 @@ plugins {
     kotlin("kapt") version "1.6.0-RC2"
     application
 
+    id("com.github.johnrengelman.shadow") version "7.1.0"
     id("com.squareup.sqldelight") version "1.5.2"
 }
 
@@ -19,11 +21,11 @@ dependencies {
     implementation("io.jooby:jooby-redis:2.11.0")
 
     // Dependency injection
-    implementation("com.google.dagger:dagger:2.40")
-    kapt("com.google.dagger:dagger-compiler:2.40")
+    implementation("com.google.dagger:dagger:2.40.1")
+    kapt("com.google.dagger:dagger-compiler:2.40.1")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.2.6")
+    implementation("ch.qos.logback:logback-classic:1.2.7")
 
     // Scheduling
     implementation("io.jooby:jooby-quartz:2.11.0")
@@ -40,7 +42,7 @@ dependencies {
     implementation("io.ktor:ktor-client-jackson:1.6.4")
 
     // CSV Parsing
-    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.1.0")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0")
 
     testImplementation(kotlin("test"))
 }
@@ -62,4 +64,9 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "13"
+}
+
+tasks.withType<ShadowJar> {
+    archiveFileName.set("ffxiv-tools.jar")
+    mergeServiceFiles()
 }
