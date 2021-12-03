@@ -7,10 +7,14 @@ import {useAccount} from "../hook/globalContext";
 
 const MainNavigation = () => {
     const [account] = useAccount();
+    const [isOpen, setIsOpen] = useState(false);
     const [menuActive, setMenuActive] = useState(false);
 
     useEffect(() => {
-        const onDocumentClick = () => setMenuActive(false);
+        const onDocumentClick = () => {
+            setIsOpen(false);
+            setMenuActive(false);
+        };
         document.addEventListener("click", onDocumentClick);
         return () => document.removeEventListener("click", onDocumentClick);
     }, []);
@@ -47,8 +51,22 @@ const MainNavigation = () => {
         <nav className="navbar is-fixed-top has-shadow" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
                 <Link to="/" className="navbar-item">FFXIV Tools</Link>
+                <a
+                    aria-expanded={isOpen}
+                    aria-label="menu"
+                    className={`navbar-burger ${isOpen ? "is-active" : ""}`}
+                    onClick={e => {
+                        e.stopPropagation();
+                        setIsOpen(!isOpen);
+                    }}
+                    role="button"
+                >
+                    <span aria-hidden="true"/>
+                    <span aria-hidden="true"/>
+                    <span aria-hidden="true"/>
+                </a>
             </div>
-            <div className="navbar-menu">
+            <div className={`navbar-menu ${isOpen ? "is-active" : ""}`}>
                 <div className="navbar-start">
                     <Link to="/watches" className="navbar-item">Watched Items</Link>
                 </div>

@@ -9,12 +9,14 @@ export type DropdownItem = {
 };
 
 export type DropdownProps = {
+    buttonClassName?: string,
     className?: string,
+    icon?: string,
     items: DropdownItem[],
-    label: string | JSX.Element | JSX.Element[],
+    label?: string | JSX.Element,
 };
 
-const Dropdown = ({className, items, label}: DropdownProps) => {
+const Dropdown = ({buttonClassName, className, icon, items, label}: DropdownProps) => {
     const [active, setActive] = useState<boolean>(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -29,16 +31,16 @@ const Dropdown = ({className, items, label}: DropdownProps) => {
         return () => document.removeEventListener("click", onDocumentClick);
     }, []);
 
-    return <div className={`dropdown ${active ? "is-active" : ""}`}>
+    return <div className={`dropdown ${active ? "is-active" : ""} ${className || ""}`}>
         <div className="dropdown-trigger">
             <button
-                className={`button ${className || ""}`}
+                className={`button ${buttonClassName || ""}`}
                 aria-haspopup="true"
                 onClick={() => setActive(!active)}
                 ref={buttonRef}
             >
-                <span>{label}</span>
-                <Icon className="is-small" name="angle-down"/>
+                {label && <span>{label}</span>}
+                <Icon className="is-small" name={icon || "angle-down"}/>
             </button>
         </div>
         <div className="dropdown-menu" role="menu">

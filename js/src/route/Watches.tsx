@@ -5,7 +5,7 @@ import {getSearchResults} from "../action/search";
 
 import CardModal from "../component/modal/CardModal";
 import ConfirmModal from "../component/modal/ConfirmModal";
-import Dropdown from "../component/Dropdown";
+import Dropdown, {DropdownItem} from "../component/Dropdown";
 import Icon from "../component/Icon";
 import SortableTable from "../component/SortableTable";
 
@@ -17,7 +17,7 @@ const GST = 1.05;
 
 const toLocaleString = (value: number) => value.toLocaleString();
 
-const toPercentString = (value: number, decimals = 2) => `${(value * 100).toFixed(decimals)}%`;
+const toPercentString = (value: number, decimals = 1) => `${(value * 100).toFixed(decimals)}%`;
 
 type WatchListProps = {
     onDeleteWatch: (arg0: Watch) => void,
@@ -28,31 +28,6 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
     const [selectedWatch, setSelectedWatch] = useState<Watch>();
     const [materialModalActive, showMaterialModal, hideMaterialModal] = useModal();
     const [deleteModalActive, showDeleteModal, hideDeleteModal] = useModal();
-
-    function renderDropdown(watch: Watch) {
-        const items = [];
-        if (watch.materials.length) {
-            items.push({
-                icon: "shopping-cart",
-                label: "Materials",
-                onClick: () => {
-                    setSelectedWatch(watch);
-                    showMaterialModal();
-                }
-            });
-            items.push(Dropdown.divider());
-        }
-        items.push({
-            icon: "trash",
-            label: "Delete",
-            onClick: () => {
-                setSelectedWatch(watch);
-                showDeleteModal();
-            }
-        });
-
-        return <Dropdown className="is-small" items={items} label="Actions"/>;
-    }
 
     return <>
         {selectedWatch && <CardModal
@@ -113,7 +88,6 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
         }>
             className="is-striped"
             columns={[
-                {className: "is-narrow", header: "", render: renderDropdown},
                 {
                     header: "Item",
                     key: "name",
@@ -144,6 +118,44 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                     header: "Profit Max",
                     key: "profitMax",
                     render: w => `${w.profitMax.toLocaleString()} (${toPercentString(w.profitMax / w.max)})`
+                },
+                {
+                    className: "is-narrow",
+                    header: "",
+                    render: watch => {
+                        let items: DropdownItem[] = [
+                            {
+                                icon: "trash",
+                                label: "Delete",
+                                onClick: () => {
+                                    setSelectedWatch(watch);
+                                    showDeleteModal();
+                                },
+                            },
+                        ];
+
+                        if (watch.materials.length) {
+                            items = [
+                                {
+                                    icon: "shopping-cart",
+                                    label: "Materials",
+                                    onClick: () => {
+                                        setSelectedWatch(watch);
+                                        showMaterialModal();
+                                    },
+                                },
+                                Dropdown.divider(),
+                                ...items,
+                            ];
+                        }
+
+                        return <Dropdown
+                            buttonClassName="is-small is-rounded"
+                            className="is-right"
+                            icon="bars"
+                            items={items}
+                        />;
+                    }
                 },
             ]}
             data={watches}
