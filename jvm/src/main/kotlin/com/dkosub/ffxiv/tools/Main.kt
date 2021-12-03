@@ -68,6 +68,8 @@ fun main(args: Array<String>) {
         // Access logging
         decorator(AccessLogHandler())
 
+        // Routing
+        routerOptions(RouterOption.IGNORE_TRAILING_SLASH)
         coroutine {
             mvc(dagger.accountController())
             mvc(dagger.authController())
