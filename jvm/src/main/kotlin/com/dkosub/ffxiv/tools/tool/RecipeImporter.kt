@@ -40,18 +40,29 @@ suspend fun main() {
         // First 3 lines are headers, 4th is 0.
         repeat(4) { readNext() }
 
+        database.itemQueries.deleteMaterials()
+
         // Parse all items and insert into the item DB
         readAllAsSequence().forEach eachRecipe@{ row ->
             val id = row[0].toInt()
             val itemId = row[4].toInt()
             if (itemId <= 0) return@eachRecipe
 
-            database.itemQueries.createRecipe(id, itemId, row[5].toInt())
+            database.itemQueries.createRecipe(
+                id = id,
+                itemId = itemId,
+                quantity = row[5].toInt()
+            )
+
             row.slice(6..25).chunked(2).forEach eachMaterial@{
                 val materialItemId = it[0].toInt()
                 if (materialItemId <= 0) return@eachMaterial
 
-                database.itemQueries.addRecipeMaterial(id, materialItemId, it[1].toInt())
+                database.itemQueries.addRecipeMaterial(
+                    recipeId = id,
+                    itemId = materialItemId,
+                    quantity = it[1].toInt()
+                )
             }
         }
     }

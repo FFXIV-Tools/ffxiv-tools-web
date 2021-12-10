@@ -1,11 +1,11 @@
 getResults:
 SELECT id, 'Item' AS type, icon, name
 FROM item
-WHERE LOWER(name) LIKE :search
+WHERE LOWER(name) LIKE LOWER(:search)
 UNION
 SELECT r.id AS id, 'Recipe' AS type, i.icon AS icon, i.name AS name
 FROM recipe r
 INNER JOIN item i ON r.item_id = i.id
-WHERE LOWER(i.name) LIKE :search
+WHERE LOWER(i.name) LIKE LOWER(:search)
 ORDER BY type ASC, name ASC
 LIMIT 10;

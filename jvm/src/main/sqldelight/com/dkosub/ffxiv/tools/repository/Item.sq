@@ -36,14 +36,31 @@ CREATE TABLE IF NOT EXISTS recipe_materials
     PRIMARY KEY (recipe_id, item_id)
 );
 
-createItem:
-INSERT INTO item(id, name, icon, marketable) VALUES(?, ?, ?, ?);
+createItem {
+    UPDATE item SET name = :name, icon = :icon, marketable = :marketable
+    WHERE id = :id;
 
-createRecipe:
-INSERT INTO recipe(id, item_id, quantity) VALUES(?, ?, ?);
+    INSERT INTO item(id, name, icon, marketable)
+    VALUES(:id, :name, :icon, :marketable)
+    ON CONFLICT DO NOTHING;
+}
+
+createRecipe {
+    UPDATE recipe SET item_id = :itemId, quantity = :quantity
+    WHERE id = :id;
+
+    INSERT INTO recipe(id, item_id, quantity)
+    VALUES(:id, :itemId, :quantity)
+    ON CONFLICT DO NOTHING;
+}
 
 addRecipeMaterial:
-INSERT INTO recipe_materials(recipe_id, item_id, quantity) VALUES(?, ?, ?);
+INSERT INTO recipe_materials(recipe_id, item_id, quantity)
+VALUES(:recipeId, :itemId, :quantity)
+ON CONFLICT DO NOTHING;
+
+deleteMaterials:
+DELETE FROM recipe_materials;
 
 listMarketableItems:
 SELECT id FROM item WHERE marketable = 1;
@@ -53,7 +70,8 @@ updateDatacenterPrices {
     WHERE item_id = :itemId AND datacenter_id = :datacenterId;
 
     INSERT INTO item_prices(item_id, datacenter_id, minimum, mean, deviation)
-    VALUES(:itemId, :datacenterId, :minimum, :mean, :deviation) ON CONFLICT DO NOTHING;
+    VALUES(:itemId, :datacenterId, :minimum, :mean, :deviation)
+    ON CONFLICT DO NOTHING;
 }
 
 updateWorldPrices {
@@ -61,7 +79,8 @@ updateWorldPrices {
     WHERE item_id = :itemId AND world_id = :worldId;
 
     INSERT INTO item_prices(item_id, world_id, minimum, mean, deviation)
-    VALUES(:itemId, :worldId, :minimum, :mean, :deviation) ON CONFLICT DO NOTHING;
+    VALUES(:itemId, :worldId, :minimum, :mean, :deviation)
+    ON CONFLICT DO NOTHING;
 }
 
 updateWorldVelocity:
