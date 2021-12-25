@@ -58,6 +58,7 @@ const Currencies = () => {
         </div>
         {items && <div className="content">
             <SortableTable
+                className="is-striped"
                 columns={[
                     {
                         header: "Item Name",
