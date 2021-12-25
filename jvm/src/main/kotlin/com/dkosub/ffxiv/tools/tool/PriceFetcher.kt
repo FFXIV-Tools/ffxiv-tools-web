@@ -1,7 +1,6 @@
 package com.dkosub.ffxiv.tools.tool
 
 import com.dkosub.ffxiv.tools.job.UniversalisJob
-import com.dkosub.ffxiv.tools.module.ConfigurationModule
 import com.dkosub.ffxiv.tools.module.DatabaseModule
 import com.dkosub.ffxiv.tools.module.HttpClientModule
 import com.dkosub.ffxiv.tools.repository.Database
@@ -17,7 +16,7 @@ interface PriceFetcherApplication {
     fun httpClient(): HttpClient
 }
 
-suspend fun main() {
+fun main() {
     val dagger = DaggerPriceFetcherApplication.create()
     val job = UniversalisJob(dagger.httpClient(), dagger.database())
 

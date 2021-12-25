@@ -1,17 +1,15 @@
 package com.dkosub.ffxiv.tools.tool
 
-import com.dkosub.ffxiv.tools.module.ConfigurationModule
 import com.dkosub.ffxiv.tools.module.DatabaseModule
 import com.dkosub.ffxiv.tools.module.HttpClientModule
 import com.dkosub.ffxiv.tools.repository.Database
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import com.dkosub.ffxiv.tools.util.parsing.EXDParser
 import dagger.Component
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import java.io.InputStream
 import javax.inject.Singleton
 
 private const val RECIPE_CSV_URL = "https://raw.githubusercontent.com/xivapi/ffxiv-datamining/master/csv/Recipe.csv"
@@ -36,34 +34,35 @@ suspend fun main() {
         return
     }
 
-    csvReader().openAsync(response.receive<InputStream>()) {
-        // First 3 lines are headers, 4th is 0.
-        repeat(4) { readNext() }
+    database.itemQueries.deleteMaterials()
 
-        database.itemQueries.deleteMaterials()
+    EXDParser(response.receive()).parse { row ->
+        val id = (row["#"] as String).toInt()
 
-        // Parse all items and insert into the item DB
-        readAllAsSequence().forEach eachRecipe@{ row ->
-            val id = row[0].toInt()
-            val itemId = row[4].toInt()
-            if (itemId <= 0) return@eachRecipe
+        val amount = row["Amount"] as HashMap<String, *>
+        val amountIngredient = amount["Ingredient"] as Array<String>
+        val amountResult = (amount["Result"] as String).toInt()
 
-            database.itemQueries.createRecipe(
-                id = id,
-                itemId = itemId,
-                quantity = row[5].toInt()
-            )
+        val item = row["Item"] as HashMap<String, *>
+        val itemIngredient = item["Ingredient"] as Array<String>
+        val itemResult = (item["Result"] as String).toInt()
 
-            row.slice(6..25).chunked(2).forEach eachMaterial@{
-                val materialItemId = it[0].toInt()
-                if (materialItemId <= 0) return@eachMaterial
+        if (itemResult <= 0) return@parse
 
+        database.itemQueries.createRecipe(
+            id = id,
+            itemId = itemResult,
+            quantity = amountResult,
+        )
+
+        itemIngredient.map { it.toInt() }
+            .filter { it > 0 }
+            .forEachIndexed { index, materialItemId ->
                 database.itemQueries.addRecipeMaterial(
                     recipeId = id,
                     itemId = materialItemId,
-                    quantity = it[1].toInt()
+                    quantity = amountIngredient[index].toInt()
                 )
             }
-        }
     }
 }

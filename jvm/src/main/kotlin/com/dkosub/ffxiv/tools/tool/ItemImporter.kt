@@ -1,17 +1,15 @@
 package com.dkosub.ffxiv.tools.tool
 
-import com.dkosub.ffxiv.tools.module.ConfigurationModule
 import com.dkosub.ffxiv.tools.module.DatabaseModule
 import com.dkosub.ffxiv.tools.module.HttpClientModule
 import com.dkosub.ffxiv.tools.repository.Database
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import com.dkosub.ffxiv.tools.util.parsing.EXDParser
 import dagger.Component
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import java.io.InputStream
 import javax.inject.Singleton
 
 private const val UNIVERSALIS_MARKETABLE_URL = "https://universalis.app/api/marketable"
@@ -43,19 +41,18 @@ suspend fun main() {
         return
     }
 
-    csvReader().openAsync(response.receive<InputStream>()) {
-        // First 3 lines are headers, 4th is 0.
-        repeat(4) { readNext() }
+    EXDParser(response.receive()).parse { row ->
+        val id = (row["#"] as String).toInt()
+        val name = row["Name"] as String
+        val icon = (row["Icon"] as String).toInt()
 
-        // Parse all items and insert into the item DB
-        readAllAsSequence().forEach {
-            val id = it[0].toInt()
-            database.itemQueries.createItem(
-                id = it[0].toInt(),
-                name = it[10],
-                icon = it[11].toInt(),
-                marketable = marketableItems.contains(id),
-            )
-        }
+        if (name.isEmpty()) return@parse
+
+        database.itemQueries.createItem(
+            id = id,
+            name = name,
+            icon = icon,
+            marketable = marketableItems.contains(id),
+        )
     }
 }
