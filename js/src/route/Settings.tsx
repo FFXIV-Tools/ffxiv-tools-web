@@ -105,7 +105,7 @@ const Settings = () => {
             }}
             onSubmit={onSubmit}
         >
-            {showSaved && <article className="message is-primary">
+            {showSaved && <article className="message is-success">
                 <div className="message-header">
                     <p><Icon name="save"/> Settings Saved</p>
                     <button

@@ -43,7 +43,14 @@ const App = () => {
             </Routes>
         </div>
         <div className="footer mt-6">
-            <div className="content has-text-centered">Copyright &copy; 2021 FFXIV Tools</div>
+            <div className="content has-text-centered">
+                <p>FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd.</p>
+                <p>Item icons &copy; SQUARE ENIX CO., LTD. All Rights Reserved.</p>
+                <p>Market data provided by <a href="https://universalis.app/"
+                                              rel="noreferrer"
+                                              target="_blank">Universalis</a>
+                </p>
+            </div>
         </div>
     </GlobalContextProvider>;
 };

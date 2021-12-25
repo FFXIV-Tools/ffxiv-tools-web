@@ -86,7 +86,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
             profitMin: number,
             profitMax: number,
         }>
-            className="is-striped"
+            className="is-bordered is-striped"
             columns={[
                 {
                     header: "Item",

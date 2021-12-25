@@ -23,7 +23,9 @@ const Currencies = () => {
     useEffect(() => {
         (async () => {
             const response = await fetch("/api/v1/market/currencies");
-            setCurrencies(await response.json());
+            const currencies = await response.json();
+            setCurrencies(currencies);
+            setCurrency(currencies[0]);
         })();
     }, []);
 
@@ -58,7 +60,7 @@ const Currencies = () => {
         </div>
         {items && <div className="content">
             <SortableTable
-                className="is-striped"
+                className="is-bordered is-striped"
                 columns={[
                     {
                         header: "Item Name",
