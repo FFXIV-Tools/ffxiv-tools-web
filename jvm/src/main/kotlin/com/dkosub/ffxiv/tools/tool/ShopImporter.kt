@@ -17,6 +17,13 @@ import kotlin.math.max
 
 private const val SHOP_CSV_URL = "https://raw.githubusercontent.com/xivapi/ffxiv-datamining/master/csv/SpecialShop.csv"
 
+private val CURRENCY_MAPPING = mapOf(
+    2 to 25199, // White Crafters' Scrip
+    4 to 25200, // White Gatherers' Scrip
+    6 to 33913, // Purple Crafters' Scrip
+    7 to 33914, // Purple Gatherers' Scrip
+    26807 to 26807, // Bicolor Gemstone
+)
 private val HEADER_REGEX = Regex("^([^{\\[]+)(\\{(\\w+)})?(\\[(\\d+)])?(\\[(\\d+)])?$")
 
 private data class Column(
@@ -106,14 +113,6 @@ suspend fun main() {
         // Skip the type and empty row
         repeat(2) { readNext() }
 
-        val currencyMapping = mapOf(
-            2 to 25199, // White Crafters' Scrip
-            4 to 25200, // White Gatherers' Scrip
-            6 to 33913, // Purple Crafters' Scrip
-            7 to 33914, // Purple Gatherers' Scrip
-            26807 to 26807, // Bicolor Gemstone
-        )
-
         readAllAsSequence().forEach { row ->
             val rowData = hashMapOf<String, Any>()
             row.forEachIndexed { index, value ->
@@ -131,7 +130,7 @@ suspend fun main() {
             itemReceive[0].map { it.toInt() }
                 .takeWhile { it > 0 }
                 .forEachIndexed { index, itemId ->
-                    val currencyId = currencyMapping[itemCost[0][index].toInt()]
+                    val currencyId = CURRENCY_MAPPING[itemCost[0][index].toInt()]
                     val cost = countCost[0][index].toInt()
                     val quantity = countReceive[0][index].toInt()
 

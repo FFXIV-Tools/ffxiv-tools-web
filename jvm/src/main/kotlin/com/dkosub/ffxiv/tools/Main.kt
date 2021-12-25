@@ -25,7 +25,7 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.toJavaDuration
 
 @Singleton
-@Component(modules = [ConfigurationModule::class, DatabaseModule::class, HttpClientModule::class])
+@Component(modules = [DatabaseModule::class, HttpClientModule::class])
 interface Application {
     // Config
     fun databaseConfig(): DatabaseConfig

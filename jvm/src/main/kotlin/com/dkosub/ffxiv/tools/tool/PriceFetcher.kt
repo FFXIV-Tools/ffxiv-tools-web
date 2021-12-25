@@ -10,7 +10,7 @@ import io.ktor.client.*
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ConfigurationModule::class, DatabaseModule::class, HttpClientModule::class])
+@Component(modules = [DatabaseModule::class, HttpClientModule::class])
 interface PriceFetcherApplication {
     fun database(): Database
 

@@ -17,7 +17,7 @@ import javax.inject.Singleton
 private const val RECIPE_CSV_URL = "https://raw.githubusercontent.com/xivapi/ffxiv-datamining/master/csv/Recipe.csv"
 
 @Singleton
-@Component(modules = [ConfigurationModule::class, DatabaseModule::class, HttpClientModule::class])
+@Component(modules = [DatabaseModule::class, HttpClientModule::class])
 interface RecipeImporterApplication {
     fun database(): Database
 

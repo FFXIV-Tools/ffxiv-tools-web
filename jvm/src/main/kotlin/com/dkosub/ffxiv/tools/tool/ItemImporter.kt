@@ -18,7 +18,7 @@ private const val UNIVERSALIS_MARKETABLE_URL = "https://universalis.app/api/mark
 private const val ITEM_CSV_URL = "https://raw.githubusercontent.com/xivapi/ffxiv-datamining/master/csv/Item.csv"
 
 @Singleton
-@Component(modules = [ConfigurationModule::class, DatabaseModule::class, HttpClientModule::class])
+@Component(modules = [DatabaseModule::class, HttpClientModule::class])
 interface ItemImporterApplication {
     fun database(): Database
 

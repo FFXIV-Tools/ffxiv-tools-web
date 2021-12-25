@@ -9,7 +9,7 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [ConfigurationModule::class])
 class DatabaseModule {
     @Provides
     @Singleton
