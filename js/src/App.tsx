@@ -5,6 +5,7 @@ import RequiresAccount from "./component/guard/RequiresAccount";
 import RequiresCharacter from "./component/guard/RequiresCharacter";
 import MainNavigation from "./container/MainNavigation";
 
+import Currencies from "./route/market/Currencies";
 import Settings from "./route/Settings";
 import Watches from "./route/Watches";
 
@@ -23,6 +24,11 @@ const App = () => {
                             to="/watches">watched items</Link> since it's the only thing available on this site so far.
                         </p>
                     </RequiresAccount>
+                }/>
+                <Route path="market/currencies" element={
+                    <RequiresCharacter>
+                        <Currencies/>
+                    </RequiresCharacter>
                 }/>
                 <Route path="settings" element={
                     <RequiresAccount>

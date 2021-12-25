@@ -68,6 +68,7 @@ const MainNavigation = () => {
             </div>
             <div className={`navbar-menu ${isOpen ? "is-active" : ""}`}>
                 <div className="navbar-start">
+                    <Link to="/market/currencies" className="navbar-item">Currencies</Link>
                     <Link to="/watches" className="navbar-item">Watched Items</Link>
                 </div>
                 <div className="navbar-end">{navbarEnd}</div>

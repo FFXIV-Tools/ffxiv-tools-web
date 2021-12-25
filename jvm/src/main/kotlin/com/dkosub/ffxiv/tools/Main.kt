@@ -5,6 +5,7 @@ import com.dkosub.ffxiv.tools.controller.AccountController
 import com.dkosub.ffxiv.tools.controller.AuthController
 import com.dkosub.ffxiv.tools.controller.SearchController
 import com.dkosub.ffxiv.tools.controller.WatchController
+import com.dkosub.ffxiv.tools.controller.market.CurrencyController
 import com.dkosub.ffxiv.tools.job.UniversalisJob
 import com.dkosub.ffxiv.tools.module.ConfigurationModule
 import com.dkosub.ffxiv.tools.module.DatabaseModule
@@ -32,6 +33,7 @@ interface Application {
     // Controllers
     fun accountController(): AccountController
     fun authController(): AuthController
+    fun currencyController(): CurrencyController
     fun searchController(): SearchController
     fun watchController(): WatchController
 
@@ -73,6 +75,7 @@ fun main(args: Array<String>) {
         coroutine {
             mvc(dagger.accountController())
             mvc(dagger.authController())
+            mvc(dagger.currencyController())
             mvc(dagger.searchController())
             mvc(dagger.watchController())
         }

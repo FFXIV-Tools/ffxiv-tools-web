@@ -8,4 +8,4 @@ FROM recipe r
 INNER JOIN item i ON r.item_id = i.id
 WHERE LOWER(i.name) LIKE LOWER(:search)
 ORDER BY type ASC, name ASC
-LIMIT 10;
+LIMIT 30;

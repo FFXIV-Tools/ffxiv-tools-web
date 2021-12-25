@@ -50,7 +50,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                                 className="mr-1"
                                 alt={`Icon for ${row.name}`}
                                 src={iconImageSrc(row.icon)}
-                                style={{height: "30px", verticalAlign: "middle"}}
+                                style={{height: "20px", verticalAlign: "middle"}}
                             />
                             {row.name}
                         </a>,
@@ -166,8 +166,8 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                     sum + m.datacenterMinimum * m.quantity, 0) * GST);
                 const materialsMax = Math.round(watch.materials.reduce((sum, m) =>
                     sum + (m.datacenterMean + m.datacenterDeviation) * m.quantity, 0) * GST);
-                const profitMin = min - materialsMax;
-                const profitMax = max - materialsMin;
+                const profitMin = min * watch.quantity - materialsMax;
+                const profitMax = max * watch.quantity - materialsMin;
 
                 return {min, max, materialsMin, materialsMax, profitMin, profitMax};
             }}

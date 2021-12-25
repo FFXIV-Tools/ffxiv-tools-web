@@ -88,6 +88,7 @@ class WatchService @Inject constructor(
                 itemId = watch.item_id.toInt(),
                 name = watch.name,
                 icon = watch.icon,
+                quantity = watch.quantity.toInt(),
                 datacenterMinimum = watch.datacenter_minimum,
                 datacenterMean = watch.datacenter_mean,
                 datacenterDeviation = watch.datacenter_deviation,

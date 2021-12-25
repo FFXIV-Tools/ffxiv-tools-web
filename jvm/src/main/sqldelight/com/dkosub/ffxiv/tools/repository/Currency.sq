@@ -1,0 +1,33 @@
+CREATE TABLE IF NOT EXISTS currency_items
+(
+    currency_id INT NOT NULL REFERENCES item (id) ON DELETE CASCADE,
+    item_id     INT NOT NULL REFERENCES item (id) ON DELETE CASCADE,
+    cost        INT NOT NULL,
+    quantity    INT NOT NULL,
+    PRIMARY KEY (currency_id, item_id)
+);
+
+deleteAllItems:
+DELETE FROM currency_items;
+
+insertItem:
+INSERT INTO currency_items(currency_id, item_id, cost, quantity)
+VALUES(:currencyId, :itemId, :cost, :quantity)
+ON CONFLICT DO NOTHING;
+
+list:
+SELECT DISTINCT(ci.currency_id) AS id, i.name, i.icon
+FROM currency_items ci
+INNER JOIN item i ON ci.currency_id = i.id
+ORDER BY i.name;
+
+listForCurrency:
+SELECT i.id, i.name, i.icon, ci.cost, ci.quantity,
+ipdc.minimum AS datacenter_minimum, ipdc.mean AS datacenter_mean, ipdc.deviation AS datacenter_deviation,
+ipw.minimum AS world_minimum, ipw.mean AS world_mean, ipw.deviation AS world_deviation
+FROM currency_items ci
+INNER JOIN item i ON ci.item_id = i.id
+INNER JOIN item_prices ipdc ON ci.item_id = ipdc.item_id AND ipdc.datacenter_id = :datacenterId
+INNER JOIN item_prices ipw ON ci.item_id = ipw.item_id AND ipw.world_id = :worldId
+WHERE ci.currency_id = :currencyId AND i.marketable = 1
+ORDER BY i.name;

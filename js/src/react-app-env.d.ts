@@ -11,6 +11,26 @@ type Assignable = {
     [key: string]: any,
 };
 
+type Currency = {
+    id: number,
+    name: string,
+    icon: number,
+};
+
+type CurrencyItem = {
+    id: number,
+    name: string,
+    icon: number,
+    cost: number,
+    quantity: number,
+    datacenterMinimum: number,
+    datacenterMean: number,
+    datacenterDeviation: number,
+    worldMinimum: number,
+    worldMean: number,
+    worldDeviation: number,
+};
+
 type Material = {
     itemId: number,
     name: string,
@@ -36,6 +56,7 @@ type Watch = {
     itemId: number,
     name: string,
     icon: number,
+    quantity: number,
     datacenterMinimum: number,
     datacenterMean: number,
     datacenterDeviation: number,

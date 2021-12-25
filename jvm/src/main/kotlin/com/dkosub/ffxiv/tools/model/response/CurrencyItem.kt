@@ -1,10 +1,10 @@
 package com.dkosub.ffxiv.tools.model.response
 
-data class Watch(
-    val id: Long,
-    val itemId: Int,
+data class CurrencyItem(
+    val id: Int,
     val name: String,
     val icon: Int,
+    val cost: Int,
     val quantity: Int,
     val datacenterMinimum: Int,
     val datacenterMean: Int,
@@ -12,5 +12,4 @@ data class Watch(
     val worldMinimum: Int,
     val worldMean: Int,
     val worldDeviation: Double,
-    val materials: List<Material>
 )
