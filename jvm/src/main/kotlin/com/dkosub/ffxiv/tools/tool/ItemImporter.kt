@@ -12,8 +12,8 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import javax.inject.Singleton
 
-private const val UNIVERSALIS_MARKETABLE_URL = "https://universalis.app/api/marketable"
 private const val ITEM_CSV_URL = "https://raw.githubusercontent.com/xivapi/ffxiv-datamining/master/csv/Item.csv"
+private const val UNIVERSALIS_MARKETABLE_URL = "https://universalis.app/api/marketable"
 
 @Singleton
 @Component(modules = [DatabaseModule::class, HttpClientModule::class])
@@ -45,8 +45,6 @@ suspend fun main() {
         val id = (row["#"] as String).toInt()
         val name = row["Name"] as String
         val icon = (row["Icon"] as String).toInt()
-
-        if (name.isEmpty()) return@parse
 
         database.itemQueries.createItem(
             id = id,

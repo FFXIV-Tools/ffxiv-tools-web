@@ -52,6 +52,13 @@ Below is a table of what must be set in order to run all the possible processes.
 | OAUTH_AUTHORIZE_URL  | https://discord.com/api/oauth2/authorize |
 | REDIS_URI            | redis://\<host:port\>                    |
 
+### Migrate the Database
+
+* Set up an IntelliJ run configuration of type gradle
+* Run: `flywayMigrate -i`
+* Environment variables: Use the `DATABASE_*` variables from above
+* Finally execute, run this especially after pulling to make sure you are in sync
+
 ### Run Configuration Setup
 
 #### Frontend Setup

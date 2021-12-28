@@ -8,6 +8,7 @@ plugins {
 
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("com.squareup.sqldelight") version "1.5.2"
+    id("org.flywaydb.flyway") version "8.3.0"
 }
 
 dependencies {
@@ -49,6 +50,17 @@ dependencies {
 
 application {
     mainClass.set("com.dkosub.ffxiv.tools.MainKt")
+}
+
+flyway {
+    val dbDialect = System.getenv("DATABASE_DIALECT")
+    val dbHost = System.getenv("DATABASE_HOST")
+    val dbPort = System.getenv("DATABASE_PORT")
+    val dbName = System.getenv("DATABASE_NAME")
+
+    url = "jdbc:$dbDialect://$dbHost:$dbPort/$dbName"
+    user = System.getenv("DATABASE_USERNAME")
+    password = System.getenv("DATABASE_USERNAME")
 }
 
 sqldelight {
