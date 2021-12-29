@@ -1,9 +1,9 @@
 # FFXIV Tools
 
-* [License](#License)
-* [Technical Choices](#Technical Choices)
-* [Development Environment Setup](#Development Environment Setup)
-* [Running FFXIV Tools in Development](#Running FFXIV Tools in Development)
+* [License](#license)
+* [Technical Choices](#technical-choices)
+* [Development Environment Setup](#development-environment-setup)
+* [Running FFXIV Tools in Development](#running-ffxiv-tools-in-development)
 
 ## License
 
@@ -11,10 +11,28 @@ TBD, for now though all rights reserved.
 
 ## Technical Choices
 
+### Backend
+
 * Database - PostgreSQL
     * Opted for simplicity of use, sane defaults, and performance
+    * Queries are written by hand but converted to Kotlin objects via SQLDelight (fairly limiting, might change)
+* Dependency Injection - Dagger
+    * Lightweight, proven, easy to use
+* HTTP Client - Ktor
+    * Pretty much the default choice for Kotlin
+* Scheduler - Quartz
+    * Integrates well with Jooby, great annotations
 * Session Management - Redis
     * Best option for fast lookups as opposed to using the DB directly
+* Web Framework - Jooby
+    * Minimal, performant, interfaces very well with Kotlin coroutines
+
+### Frontend
+
+* CSS Framework - Bulma
+    * Lighter than Bootstrap with most of the functionality still needed
+* JS Framework - React (hooks)
+    * Everyone knows it, completely painless setup using `react-scripts`
 
 ## Development Environment Setup
 
