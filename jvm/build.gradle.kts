@@ -17,16 +17,16 @@ dependencies {
     kapt("io.jooby:jooby-apt:2.11.0")
     // Jackson support
     implementation("io.jooby:jooby-jackson:2.11.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
     // Session management
     implementation("io.jooby:jooby-redis:2.11.0")
 
     // Dependency injection
-    implementation("com.google.dagger:dagger:2.40.1")
-    kapt("com.google.dagger:dagger-compiler:2.40.1")
+    implementation("com.google.dagger:dagger:2.40.5")
+    kapt("com.google.dagger:dagger-compiler:2.40.5")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.2.7")
+    implementation("ch.qos.logback:logback-classic:1.2.9")
 
     // Scheduling
     implementation("io.jooby:jooby-quartz:2.11.0")
@@ -34,13 +34,13 @@ dependencies {
     // Database
     implementation("com.zaxxer:HikariCP:5.0.0")
     implementation("org.postgresql:postgresql:42.3.1")
-    implementation("com.squareup.sqldelight:coroutines-extensions:1.5.2")
-    implementation("com.squareup.sqldelight:jdbc-driver:1.5.2")
+    implementation("com.squareup.sqldelight:coroutines-extensions:1.5.3")
+    implementation("com.squareup.sqldelight:jdbc-driver:1.5.3")
 
     // HTTP client
-    implementation("io.ktor:ktor-client-core:1.6.4")
-    implementation("io.ktor:ktor-client-java:1.6.4")
-    implementation("io.ktor:ktor-client-jackson:1.6.4")
+    implementation("io.ktor:ktor-client-core:1.6.7")
+    implementation("io.ktor:ktor-client-java:1.6.7")
+    implementation("io.ktor:ktor-client-jackson:1.6.7")
 
     // CSV Parsing
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0")
