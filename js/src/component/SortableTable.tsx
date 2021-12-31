@@ -26,10 +26,11 @@ export type SortableTableProps<T, D> = {
     }[],
     data: T[],
     deriveKeys?: (arg0: T) => D,
+    filter?: (arg0: T & D) => boolean,
 };
 
 export default function SortableTable<T, D>(props: SortableTableProps<T, D>) {
-    const {className, columns, data, deriveKeys} = props;
+    const {className, columns, data, deriveKeys, filter} = props;
     const [settings, setSettings] = useState<Settings>({dir: 1});
 
     const derivedData = useMemo(() => data.map(row => {
@@ -37,10 +38,10 @@ export default function SortableTable<T, D>(props: SortableTableProps<T, D>) {
     }), [data, deriveKeys]);
 
     const sortedData = useMemo(() => {
-        const dataCopy = [...derivedData];
+        const filteredData = derivedData.filter(filter || (() => true));
         if (settings.key) {
             const {dir, key} = settings;
-            dataCopy.sort((a: any, b: any) => {
+            filteredData.sort((a: any, b: any) => {
                 if (a[key] < b[key])
                     return -dir;
                 if (a[key] > b[key])
@@ -48,8 +49,8 @@ export default function SortableTable<T, D>(props: SortableTableProps<T, D>) {
                 return 0;
             });
         }
-        return dataCopy;
-    }, [derivedData, settings]);
+        return filteredData;
+    }, [derivedData, filter, settings]);
 
     function onColumnClick(key: string) {
         let dir = 1;

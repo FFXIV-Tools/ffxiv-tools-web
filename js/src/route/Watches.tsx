@@ -19,12 +19,18 @@ const toLocaleString = (value: number) => value.toLocaleString();
 
 const toPercentString = (value: number, decimals = 1) => `${(value * 100).toFixed(decimals)}%`;
 
+type Filters = {
+    name: RegExp,
+    profitable: boolean,
+};
+
 type WatchListProps = {
     onDeleteWatch: (arg0: Watch) => void,
     watches: undefined | Watch[],
 };
 
 const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Watch[] }) => {
+    const [filters, setFilters] = useState<Filters>({name: /.*/, profitable: false});
     const [selectedWatch, setSelectedWatch] = useState<Watch>();
     const [materialModalActive, showMaterialModal, hideMaterialModal] = useModal();
     const [deleteModalActive, showDeleteModal, hideDeleteModal] = useModal();
@@ -67,6 +73,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                 }}
             />
         </CardModal>}
+
         {selectedWatch && <ConfirmModal
             active={deleteModalActive}
             close={hideDeleteModal}
@@ -78,6 +85,45 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
         >
             <p>Stop watching {selectedWatch.name}?</p>
         </ConfirmModal>}
+
+        <div className="mb-3">
+            <div className="field">
+                <div className="field-body is-align-items-center">
+                    <div className="field is-flex-grow-0">
+                        <Icon name="filter"/> Filters
+                    </div>
+                    <div className="field is-flex-grow-1">
+                        <div className="control">
+                            <input
+                                type="text"
+                                className="input"
+                                onChange={e => {
+                                    const value = e.target.value
+                                        // Replace all RegExp special characters except star
+                                        .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+                                        // Replace stars with a wildcard search
+                                        .replace(/\*/g, ".*");
+
+                                    const regex = value ? RegExp(`.*${value}.*`, "i") : /.*/;
+                                    setFilters({...filters, name: regex})
+                                }}
+                                placeholder="Name - * for wildcard"
+                            />
+                        </div>
+                    </div>
+                    <div className="field is-flex-grow-4">
+                        <label className="checkbox">
+                            <input
+                                checked={filters.profitable}
+                                onChange={e => setFilters({...filters, profitable: e.target.checked})}
+                                type="checkbox"
+                            /> Net Profitable
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <SortableTable<Watch, {
             min: number,
             max: number,
@@ -171,6 +217,9 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
 
                 return {min, max, materialsMin, materialsMax, profitMin, profitMax};
             }}
+            filter={watch => {
+                return filters.name.test(watch.name) && (!filters.profitable || watch.profitMin > 0);
+            }}
         />
     </>;
 }
@@ -206,9 +255,7 @@ const Watches = () => {
             setSearchResults([]);
         }
 
-        (async () => {
-            setWatches(await getWatches());
-        })();
+        getWatches().then(setWatches);
 
         document.addEventListener("click", onDocumentClick);
         return () => document.removeEventListener("click", onDocumentClick);
