@@ -1,6 +1,10 @@
 @import "~bulmaswatch/darkly/bulmaswatch";
 @import "~bulma-tooltip/src/sass";
 
+.button.is-static {
+  color: $grey-darker;
+}
+
 th.is-narrow {
   width: 1px;
 }

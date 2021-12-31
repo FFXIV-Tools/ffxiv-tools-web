@@ -59,14 +59,14 @@ class EXDParser(private val stream: InputStream) {
             // First line only contains the indexes, pretty useless
             readNext()
 
-            val headers = readNext() ?: throw RuntimeException("Failed to read header row")
+            val headers = readNext() ?: throw RuntimeException("failed to read header row")
             val metadataLookup = hashMapOf<EXDKey, EXDMetadata>()
 
             val columns = headers.map { header ->
                 if (header.isEmpty()) return@map null
 
-                val match = HEADER_REGEX.matchEntire(header) ?: throw RuntimeException("Header does not parse: $header")
-                val key = match.groups[1]?.value ?: throw RuntimeException("No primary key")
+                val match = HEADER_REGEX.matchEntire(header) ?: throw RuntimeException("header does not parse: $header")
+                val key = match.groups[1]?.value ?: throw RuntimeException("no primary key")
                 val subKey = match.groups[3]?.value
                 val index1 = match.groups[5]?.value?.toInt()
                 val index2 = match.groups[7]?.value?.toInt()

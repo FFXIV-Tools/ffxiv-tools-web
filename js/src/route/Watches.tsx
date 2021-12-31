@@ -20,8 +20,8 @@ const toLocaleString = (value: number) => value.toLocaleString();
 const toPercentString = (value: number, decimals = 1) => `${(value * 100).toFixed(decimals)}%`;
 
 type Filters = {
+    minProfit: number,
     name: RegExp,
-    profitable: boolean,
 };
 
 type WatchListProps = {
@@ -30,7 +30,7 @@ type WatchListProps = {
 };
 
 const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Watch[] }) => {
-    const [filters, setFilters] = useState<Filters>({name: /.*/, profitable: false});
+    const [filters, setFilters] = useState<Filters>({minProfit: Number.MIN_SAFE_INTEGER, name: /.*/});
     const [selectedWatch, setSelectedWatch] = useState<Watch>();
     const [materialModalActive, showMaterialModal, hideMaterialModal] = useModal();
     const [deleteModalActive, showDeleteModal, hideDeleteModal] = useModal();
@@ -92,8 +92,11 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                     <div className="field is-flex-grow-0">
                         <Icon name="filter"/> Filters
                     </div>
-                    <div className="field is-flex-grow-1">
+                    <div className="field has-addons">
                         <div className="control">
+                            <div className="button is-static">Name</div>
+                        </div>
+                        <div className="control is-expanded">
                             <input
                                 type="text"
                                 className="input"
@@ -107,18 +110,30 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                                     const regex = value ? RegExp(`.*${value}.*`, "i") : /.*/;
                                     setFilters({...filters, name: regex})
                                 }}
-                                placeholder="Name - * for wildcard"
+                                placeholder="Use * for wildcards"
                             />
                         </div>
                     </div>
-                    <div className="field is-flex-grow-4">
-                        <label className="checkbox">
+                    <div className="field has-addons">
+                        <div className="control">
+                            <div className="button is-static">Min Profit</div>
+                        </div>
+                        <div className="control is-expanded">
                             <input
-                                checked={filters.profitable}
-                                onChange={e => setFilters({...filters, profitable: e.target.checked})}
-                                type="checkbox"
-                            /> Net Profitable
-                        </label>
+                                type="number"
+                                className="input"
+                                onChange={e => {
+                                    let minProfit = +e.target.value;
+                                    if (!e.target.value) {
+                                        minProfit = Number.MIN_SAFE_INTEGER;
+                                    }
+                                    setFilters({...filters, minProfit});
+                                }}
+                            />
+                        </div>
+                        <div className="control">
+                            <div className="button is-static">gil</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -218,7 +233,7 @@ const WatchListTable = ({onDeleteWatch, watches}: WatchListProps & { watches: Wa
                 return {min, max, materialsMin, materialsMax, profitMin, profitMax};
             }}
             filter={watch => {
-                return filters.name.test(watch.name) && (!filters.profitable || watch.profitMin > 0);
+                return filters.name.test(watch.name) && filters.minProfit <= watch.profitMin;
             }}
         />
     </>;
@@ -296,6 +311,9 @@ const Watches = () => {
                             </button>
                         </div>
                     </div>
+                    <p className="help is-info has-text-centered mt-2">
+                        <Icon name="info"/> prefix with <code>i:</code> for items or <code>r:</code> for recipes
+                    </p>
                     {searchResults.length > 0 && <div className="search-result">
                         {searchResults.map(result =>
                             <div
