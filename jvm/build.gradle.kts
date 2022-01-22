@@ -13,26 +13,26 @@ plugins {
 
 dependencies {
     // Web server
-    implementation("io.jooby:jooby-utow:2.11.0")
-    kapt("io.jooby:jooby-apt:2.11.0")
+    implementation("io.jooby:jooby-utow:2.13.0")
+    kapt("io.jooby:jooby-apt:2.13.0")
     // Jackson support
-    implementation("io.jooby:jooby-jackson:2.11.0")
+    implementation("io.jooby:jooby-jackson:2.13.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
     // Session management
-    implementation("io.jooby:jooby-redis:2.11.0")
+    implementation("io.jooby:jooby-redis:2.13.0")
 
     // Dependency injection
     implementation("com.google.dagger:dagger:2.40.5")
     kapt("com.google.dagger:dagger-compiler:2.40.5")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.2.9")
+    implementation("ch.qos.logback:logback-classic:1.2.10")
 
     // Scheduling
-    implementation("io.jooby:jooby-quartz:2.11.0")
+    implementation("io.jooby:jooby-quartz:2.13.0")
 
     // Database
-    implementation("com.zaxxer:HikariCP:5.0.0")
+    implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.postgresql:postgresql:42.3.1")
     implementation("com.squareup.sqldelight:coroutines-extensions:1.5.3")
     implementation("com.squareup.sqldelight:jdbc-driver:1.5.3")
