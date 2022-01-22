@@ -21,6 +21,7 @@ private val CURRENCY_MAPPING = mapOf(
     6 to 33913, // Purple Crafters' Scrip
     7 to 33914, // Purple Gatherers' Scrip
     26807 to 26807, // Bicolor Gemstone
+    28063 to 28063, // Skybuilders' Scrip
 )
 
 @Singleton
