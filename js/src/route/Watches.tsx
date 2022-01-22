@@ -290,52 +290,50 @@ const Watches = () => {
     }, [search]);
 
     return <>
-        <nav className="level mt-5">
-            <div className="level-item">
-                <form className="search" onSubmit={e => e.preventDefault()}>
-                    <div className="field has-addons mb-0">
-                        <div className="control">
-                            <input
-                                className="input"
-                                onChange={onSearchChange}
-                                placeholder="Search items/recipes..."
-                                style={{width: "400px"}}
-                                type="search"
-                                value={search}
-                            />
-                        </div>
-                        <div className="control">
-                            <button className="button is-primary" type="submit">
-                                <Icon name="search"/>
-                                <span>Search</span>
-                            </button>
-                        </div>
+        <form className="search" onSubmit={e => e.preventDefault()}>
+            <div className="search-body">
+                <div className="field has-addons">
+                    <div className="control">
+                        <input
+                            className="input"
+                            onChange={onSearchChange}
+                            placeholder="Search items/recipes..."
+                            style={{width: "400px"}}
+                            type="search"
+                            value={search}
+                        />
                     </div>
-                    <p className="help is-info has-text-centered mt-2">
-                        <Icon name="info"/> prefix with <code>i:</code> for items or <code>r:</code> for recipes
-                    </p>
-                    {searchResults.length > 0 && <div className="search-result">
-                        {searchResults.map(result =>
-                            <div
-                                className="search-result-item"
-                                key={`${result.type}:${result.id}`}
-                                onClick={async () => setWatches(await createWatch(result.id, result.type))}
-                                role="menuitem"
-                            >
-                                <div className="search-result-name">
-                                    <img
-                                        src={iconImageSrc(result.icon)}
-                                        alt={`Icon for ${result.name}`}
-                                    />
-                                    {result.name}
-                                </div>
-                                <div className="search-result-type">{result.type}</div>
+                    <div className="control">
+                        <button className="button is-primary" type="submit">
+                            <Icon name="search"/>
+                            <span>Search</span>
+                        </button>
+                    </div>
+                </div>
+                {searchResults.length > 0 && <div className="search-result">
+                    {searchResults.map(result =>
+                        <div
+                            className="search-result-item"
+                            key={`${result.type}:${result.id}`}
+                            onClick={async () => setWatches(await createWatch(result.id, result.type))}
+                            role="menuitem"
+                        >
+                            <img
+                                src={iconImageSrc(result.icon)}
+                                alt={`Icon for ${result.name}`}
+                            />
+                            <div className="search-result-name">
+                                {result.name}
                             </div>
-                        )}
-                    </div>}
-                </form>
+                            <div className="search-result-type">{result.type}</div>
+                        </div>
+                    )}
+                </div>}
             </div>
-        </nav>
+        </form>
+        <p className="help is-info has-text-centered mt-2 mb-4">
+            <Icon name="info"/> prefix with <code>i:</code> for items or <code>r:</code> for recipes
+        </p>
         <WatchList onDeleteWatch={onDeleteWatch} watches={watches}/>
     </>;
 };
