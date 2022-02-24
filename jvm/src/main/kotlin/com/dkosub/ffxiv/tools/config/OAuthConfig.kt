@@ -1,9 +1,13 @@
 package com.dkosub.ffxiv.tools.config
 
-class OAuthConfig {
-    fun clientId(): String = System.getenv("OAUTH_CLIENT_ID")
-    fun clientSecret(): String = System.getenv("OAUTH_CLIENT_SECRET")
-    fun authorizeUrl(): String = System.getenv("OAUTH_AUTHORIZE_URL")
-    fun redirectUrl(): String = System.getenv("OAUTH_REDIRECT_URL")
-    fun tokenUrl(): String = System.getenv("OAUTH_TOKEN_URL")
+import javax.inject.Inject
+
+class OAuthConfig @Inject constructor(
+    private val env: Environment
+) {
+    fun clientId(): String = env.variable("OAUTH_CLIENT_ID")
+    fun clientSecret(): String = env.variable("OAUTH_CLIENT_SECRET")
+    fun authorizeUrl(): String = env.variable("OAUTH_AUTHORIZE_URL")
+    fun redirectUrl(): String = env.variable("OAUTH_REDIRECT_URL")
+    fun tokenUrl(): String = env.variable("OAUTH_TOKEN_URL")
 }
