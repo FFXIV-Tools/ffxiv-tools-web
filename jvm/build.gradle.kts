@@ -33,7 +33,7 @@ dependencies {
 
     // Database
     implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("org.postgresql:postgresql:42.3.1")
+    implementation("org.postgresql:postgresql:42.3.2")
     implementation("com.squareup.sqldelight:coroutines-extensions:1.5.3")
     implementation("com.squareup.sqldelight:jdbc-driver:1.5.3")
 
