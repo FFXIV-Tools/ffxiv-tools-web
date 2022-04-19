@@ -47,7 +47,7 @@ suspend fun main() {
 
     database.currencyQueries.deleteAllItems()
 
-    EXDParser(response.receive()).parse { row ->
+    EXDParser(response.body()).parse { row ->
         val count = row["Count"] as HashMap<String, *>
         val countCost = count["Cost"] as Array<Array<String>>
         val countReceive = count["Receive"] as Array<Array<String>>

@@ -8,7 +8,6 @@ import com.squareup.sqldelight.runtime.coroutines.mapToList
 import io.jooby.quartz.Scheduled
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -71,16 +70,13 @@ class UniversalisJob @Inject constructor(
 
         allIds.chunked(100).forEach { ids ->
             val url = UNIVERSALIS_CURRENTLY_SHOWN_URL + ids.joinToString(",") + "?entries=0&noGst=1"
-            val response: HttpResponse = client.get(url) {
-                expectSuccess = false
-            }
+            val response: HttpResponse = client.get(url)
             if (!response.status.isSuccess()) {
                 log.warn("Failed to process item price batch {}", ids.joinToString())
                 return
             }
 
-            val currentlyShownResponse = response.receive<CurrentlyShownResponse>()
-            currentlyShownResponse.items.forEach { item ->
+            response.body<CurrentlyShownResponse>().items.forEach { item ->
                 // TODO: This feels like a bad idea right now but I can't think of anything better.
                 val allItems = item.listings.flatMap { listing ->
                     MutableList(listing.quantity) { listing.pricePerUnit }
@@ -124,16 +120,13 @@ class UniversalisJob @Inject constructor(
 
         allIds.chunked(100).forEach { ids ->
             val url = UNIVERSALIS_HISTORY_URL + ids.joinToString(",") + "?entries=0&statsWithin=1209600000"
-            val response: HttpResponse = client.get(url) {
-                expectSuccess = false
-            }
+            val response: HttpResponse = client.get(url)
             if (!response.status.isSuccess()) {
                 log.warn("Failed to process item velocity batch {}", ids.joinToString())
                 return
             }
 
-            val historyResponse = response.receive<HistoryResponse>()
-            historyResponse.items.forEach { item ->
+            response.body<HistoryResponse>().items.forEach { item ->
                 db.itemQueries.updateWorldVelocity(
                     worldId = 55,
                     itemId = item.itemID,

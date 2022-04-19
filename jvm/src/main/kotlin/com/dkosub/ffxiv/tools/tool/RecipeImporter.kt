@@ -36,7 +36,7 @@ suspend fun main() {
 
     database.itemQueries.deleteMaterials()
 
-    EXDParser(response.receive()).parse { row ->
+    EXDParser(response.body()).parse { row ->
         val id = (row["#"] as String).toInt()
 
         val amount = row["Amount"] as HashMap<String, *>

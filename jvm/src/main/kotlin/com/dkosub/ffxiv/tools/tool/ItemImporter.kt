@@ -24,8 +24,7 @@ interface ItemImporterApplication {
 }
 
 private suspend fun fetchMarketableItems(client: HttpClient): List<Int> {
-    val response: HttpResponse = client.request(UNIVERSALIS_MARKETABLE_URL)
-    return response.receive()
+    return client.request(UNIVERSALIS_MARKETABLE_URL).body()
 }
 
 suspend fun main() {
@@ -41,7 +40,7 @@ suspend fun main() {
         return
     }
 
-    EXDParser(response.receive()).parse { row ->
+    EXDParser(response.body()).parse { row ->
         val id = (row["#"] as String).toInt()
         val name = row["Name"] as String
         val icon = (row["Icon"] as String).toInt()
