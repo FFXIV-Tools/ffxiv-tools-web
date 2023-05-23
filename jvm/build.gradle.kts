@@ -1,55 +1,54 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.20"
-    kotlin("kapt") version "1.6.20"
+    kotlin("jvm") version "1.8.21"
+    kotlin("kapt") version "1.8.21"
     application
 
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("com.squareup.sqldelight") version "1.5.3"
-    id("org.flywaydb.flyway") version "8.5.8"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.squareup.sqldelight") version "1.5.5"
+    id("org.flywaydb.flyway") version "9.18.0"
 }
 
 dependencies {
     // Web server
-    implementation("io.jooby:jooby-utow:2.13.0")
-    kapt("io.jooby:jooby-apt:2.13.0")
+    implementation("io.jooby:jooby-utow:2.16.1")
+    kapt("io.jooby:jooby-apt:2.16.1")
     // Jackson support
-    implementation("io.jooby:jooby-jackson:2.13.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
+    implementation("io.jooby:jooby-jackson:2.16.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.1")
     // Session management
-    implementation("io.jooby:jooby-redis:2.13.0")
+    implementation("io.jooby:jooby-redis:2.16.1")
 
     // Dependency injection
-    implementation("com.google.dagger:dagger:2.41")
-    kapt("com.google.dagger:dagger-compiler:2.41")
+    implementation("com.google.dagger:dagger:2.46.1")
+    kapt("com.google.dagger:dagger-compiler:2.46.1")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("ch.qos.logback:logback-classic:1.4.7")
 
     // Scheduling
-    implementation("io.jooby:jooby-quartz:2.13.0")
+    implementation("io.jooby:jooby-quartz:2.16.1")
 
     // Database
     implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("org.postgresql:postgresql:42.3.3")
-    implementation("com.squareup.sqldelight:coroutines-extensions:1.5.3")
-    implementation("com.squareup.sqldelight:jdbc-driver:1.5.3")
+    implementation("org.postgresql:postgresql:42.6.0")
+    implementation("com.squareup.sqldelight:coroutines-extensions:1.5.5")
+    implementation("com.squareup.sqldelight:jdbc-driver:1.5.5")
 
     // HTTP client
-    implementation("io.ktor:ktor-client-core:2.0.0")
-    implementation("io.ktor:ktor-client-java:2.0.0")
+    implementation("io.ktor:ktor-client-core:2.3.0")
+    implementation("io.ktor:ktor-client-java:2.3.0")
     // JSON support
-    implementation("io.ktor:ktor-client-content-negotiation:2.0.0")
-    implementation("io.ktor:ktor-serialization-jackson:2.0.0")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
+    implementation("io.ktor:ktor-serialization-jackson:2.3.0")
 
     // CSV Parsing
-    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.0")
 
     testImplementation(kotlin("test"))
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-    testImplementation("org.mockito:mockito-inline:4.4.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
 }
 
 application {
