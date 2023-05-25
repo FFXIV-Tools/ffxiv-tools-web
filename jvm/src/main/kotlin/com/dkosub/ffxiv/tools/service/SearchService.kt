@@ -19,8 +19,6 @@ class SearchService @Inject constructor(
         val (_, type, text) = match.destructured
         val searchQuery = "%${text}%"
 
-        println("$type, $text")
-
         // TODO: This looks like complete trash
         return when (type) {
             "i" -> db.searchQueries.getItemResults(searchQuery)

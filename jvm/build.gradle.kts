@@ -56,20 +56,20 @@ application {
 }
 
 flyway {
-    val dbDialect = System.getenv("DATABASE_DIALECT")
-    val dbHost = System.getenv("DATABASE_HOST")
-    val dbPort = System.getenv("DATABASE_PORT")
-    val dbName = System.getenv("DATABASE_NAME")
+    val dbDialect = System.getenv("DATABASE_DIALECT") ?: "postgresql"
+    val dbHost = System.getenv("DATABASE_HOST") ?: "localhost"
+    val dbPort = System.getenv("DATABASE_PORT") ?: 5432
+    val dbName = System.getenv("DATABASE_NAME") ?: "ffxivtools"
 
     url = "jdbc:$dbDialect://$dbHost:$dbPort/$dbName"
-    user = System.getenv("DATABASE_USERNAME")
-    password = System.getenv("DATABASE_USERNAME")
+    user = System.getenv("DATABASE_USERNAME") ?: "postgres"
+    password = System.getenv("DATABASE_USERNAME") ?: "postgres"
 }
 
 sqldelight {
     database("Database") {
         packageName = "com.dkosub.ffxiv.tools.repository"
-        dialect = "postgresql"
+        dialect = System.getenv("DATABASE_DIALECT") ?: "postgresql"
     }
 }
 
