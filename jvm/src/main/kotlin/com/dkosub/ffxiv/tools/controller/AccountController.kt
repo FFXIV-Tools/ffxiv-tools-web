@@ -4,9 +4,9 @@ import com.dkosub.ffxiv.tools.model.Account
 import com.dkosub.ffxiv.tools.model.request.UpdateAccountRequest
 import com.dkosub.ffxiv.tools.service.AccountService
 import io.jooby.Context
-import io.jooby.annotations.GET
-import io.jooby.annotations.POST
-import io.jooby.annotations.Path
+import io.jooby.annotation.GET
+import io.jooby.annotation.POST
+import io.jooby.annotation.Path
 import io.jooby.body
 import javax.inject.Inject
 import javax.inject.Singleton

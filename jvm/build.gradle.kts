@@ -12,13 +12,13 @@ plugins {
 
 dependencies {
     // Web server
-    implementation("io.jooby:jooby-utow:2.16.1")
-    kapt("io.jooby:jooby-apt:2.16.1")
+    implementation("io.jooby:jooby-undertow:3.0.0.M9")
+    kapt("io.jooby:jooby-apt:3.0.0.M9")
     // Jackson support
-    implementation("io.jooby:jooby-jackson:2.16.1")
+    implementation("io.jooby:jooby-jackson:3.0.0.M9")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.1")
     // Session management
-    implementation("io.jooby:jooby-redis:2.16.1")
+    implementation("io.jooby:jooby-redis:3.0.0.M9")
 
     // Dependency injection
     implementation("com.google.dagger:dagger:2.46.1")
@@ -28,7 +28,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.7")
 
     // Scheduling
-    implementation("io.jooby:jooby-quartz:2.16.1")
+    implementation("io.jooby:jooby-quartz:3.0.0.M9")
 
     // Database
     implementation("com.zaxxer:HikariCP:5.0.1")
@@ -64,6 +64,10 @@ flyway {
     url = "jdbc:$dbDialect://$dbHost:$dbPort/$dbName"
     user = System.getenv("DATABASE_USERNAME") ?: "postgres"
     password = System.getenv("DATABASE_USERNAME") ?: "postgres"
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 sqldelight {

@@ -3,8 +3,8 @@ package com.dkosub.ffxiv.tools.controller
 import com.dkosub.ffxiv.tools.model.response.SearchResult
 import com.dkosub.ffxiv.tools.service.SearchService
 import io.jooby.Context
-import io.jooby.annotations.GET
-import io.jooby.annotations.Path
+import io.jooby.annotation.GET
+import io.jooby.annotation.Path
 import io.jooby.exception.BadRequestException
 import javax.inject.Inject
 import javax.inject.Singleton

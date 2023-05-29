@@ -5,7 +5,7 @@ import com.dkosub.ffxiv.tools.model.request.WatchType
 import com.dkosub.ffxiv.tools.model.response.Watch
 import com.dkosub.ffxiv.tools.service.WatchService
 import io.jooby.Context
-import io.jooby.annotations.*
+import io.jooby.annotation.*
 import io.jooby.body
 import javax.inject.Inject
 import javax.inject.Singleton

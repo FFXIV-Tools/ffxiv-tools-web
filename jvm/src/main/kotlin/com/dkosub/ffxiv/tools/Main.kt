@@ -7,7 +7,6 @@ import com.dkosub.ffxiv.tools.controller.SearchController
 import com.dkosub.ffxiv.tools.controller.WatchController
 import com.dkosub.ffxiv.tools.controller.market.CurrencyController
 import com.dkosub.ffxiv.tools.job.UniversalisJob
-import com.dkosub.ffxiv.tools.module.ConfigurationModule
 import com.dkosub.ffxiv.tools.module.DatabaseModule
 import com.dkosub.ffxiv.tools.module.HttpClientModule
 import com.dkosub.ffxiv.tools.service.AuthService
@@ -15,7 +14,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import dagger.Component
 import io.jooby.*
-import io.jooby.json.JacksonModule
+import io.jooby.jackson.JacksonModule
 import io.jooby.quartz.QuartzModule
 import io.jooby.redis.RedisModule
 import io.jooby.redis.RedisSessionStore
@@ -68,7 +67,7 @@ fun main(args: Array<String>) {
         install(QuartzModule(UniversalisJob::class.java))
 
         // Access logging
-        decorator(AccessLogHandler())
+        use(AccessLogHandler())
 
         // Routing
         routerOptions(RouterOption.IGNORE_TRAILING_SLASH)

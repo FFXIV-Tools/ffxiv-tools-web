@@ -3,8 +3,8 @@ package com.dkosub.ffxiv.tools.controller
 import com.dkosub.ffxiv.tools.config.OAuthConfig
 import com.dkosub.ffxiv.tools.service.AuthService
 import io.jooby.Context
-import io.jooby.annotations.GET
-import io.jooby.annotations.Path
+import io.jooby.annotation.GET
+import io.jooby.annotation.Path
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
