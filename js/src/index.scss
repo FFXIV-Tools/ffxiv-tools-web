@@ -1,5 +1,7 @@
-@import "~bulmaswatch/darkly/bulmaswatch";
-@import "~bulma-tooltip/src/sass";
+@import "bulmaswatch/darkly/variables";
+@import "bulma/bulma";
+@import "bulmaswatch/darkly/overrides";
+@import "bulma-tooltip/src/sass";
 
 .button.is-static {
   color: $grey-darker;
