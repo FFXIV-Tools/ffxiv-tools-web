@@ -1,0 +1,26 @@
+name: Build Frontend
+
+on:
+  push:
+    branches:
+      - master
+
+defaults:
+  run:
+    working-directory: ./js
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Build
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - run: npm install
+      - run: npm run build
