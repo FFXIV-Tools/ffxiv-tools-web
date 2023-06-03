@@ -3,13 +3,13 @@ package com.dkosub.ffxiv.tools.config
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
 import org.mockito.kotlin.whenever
 
 internal class DatabaseConfigTest {
     @Test
     fun whenLoaded_thenFetchesRelevantVariables() {
-        val environment: Environment = mock()
+        val environment: Environment = spy(Environment())
         doReturn("dialect").whenever(environment).variable("DATABASE_DIALECT")
         doReturn("host").whenever(environment).variable("DATABASE_HOST")
         doReturn("12345").whenever(environment).variable("DATABASE_PORT")
