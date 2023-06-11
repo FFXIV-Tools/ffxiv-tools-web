@@ -1,13 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.8.21"
-    kotlin("kapt") version "1.8.21"
+    kotlin("jvm") version "1.8.22"
+    kotlin("kapt") version "1.8.22"
     application
 
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.squareup.sqldelight") version "1.5.5"
-    id("org.flywaydb.flyway") version "9.18.0"
+    id("org.flywaydb.flyway") version "9.19.3"
 }
 
 dependencies {
@@ -16,7 +16,7 @@ dependencies {
     kapt("io.jooby:jooby-apt:3.0.0.M9")
     // Jackson support
     implementation("io.jooby:jooby-jackson:3.0.0.M9")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
     // Session management
     implementation("io.jooby:jooby-redis:3.0.0.M9")
 
@@ -37,17 +37,17 @@ dependencies {
     implementation("com.squareup.sqldelight:jdbc-driver:1.5.5")
 
     // HTTP client
-    implementation("io.ktor:ktor-client-core:2.3.0")
-    implementation("io.ktor:ktor-client-java:2.3.0")
+    implementation("io.ktor:ktor-client-core:2.3.1")
+    implementation("io.ktor:ktor-client-java:2.3.1")
     // JSON support
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
-    implementation("io.ktor:ktor-serialization-jackson:2.3.0")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.1")
+    implementation("io.ktor:ktor-serialization-jackson:2.3.1")
 
     // CSV Parsing
-    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.0")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.1")
 
     testImplementation(kotlin("test"))
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
 }
 
