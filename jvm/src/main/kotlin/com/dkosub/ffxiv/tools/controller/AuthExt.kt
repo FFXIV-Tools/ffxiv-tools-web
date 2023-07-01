@@ -4,7 +4,7 @@ import com.dkosub.ffxiv.tools.model.Account
 import com.dkosub.ffxiv.tools.service.AuthService
 import io.jooby.Context
 import io.jooby.exception.UnauthorizedException
-import io.jooby.require
+import io.jooby.kt.require
 
 suspend fun Context.validateAccount(): Account {
     val session = this.sessionOrNull()

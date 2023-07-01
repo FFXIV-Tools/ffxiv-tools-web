@@ -7,28 +7,31 @@ plugins {
 
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.squareup.sqldelight") version "1.5.5"
-    id("org.flywaydb.flyway") version "9.19.3"
+    id("org.flywaydb.flyway") version "9.20.0"
 }
 
 dependencies {
+    // Jooby core
+    implementation("io.jooby:jooby:3.0.0.M11")
+    implementation("io.jooby:jooby-kotlin:3.0.0.M11")
     // Web server
-    implementation("io.jooby:jooby-undertow:3.0.0.M9")
-    kapt("io.jooby:jooby-apt:3.0.0.M9")
+    implementation("io.jooby:jooby-undertow:3.0.0.M11")
+    kapt("io.jooby:jooby-apt:3.0.0.M11")
     // Jackson support
-    implementation("io.jooby:jooby-jackson:3.0.0.M9")
+    implementation("io.jooby:jooby-jackson:3.0.0.M11")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
     // Session management
-    implementation("io.jooby:jooby-redis:3.0.0.M9")
+    implementation("io.jooby:jooby-redis:3.0.0.M11")
 
     // Dependency injection
     implementation("com.google.dagger:dagger:2.46.1")
     kapt("com.google.dagger:dagger-compiler:2.46.1")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.4.7")
+    implementation("ch.qos.logback:logback-classic:1.4.8")
 
     // Scheduling
-    implementation("io.jooby:jooby-quartz:3.0.0.M9")
+    implementation("io.jooby:jooby-quartz:3.0.0.M11")
 
     // Database
     implementation("com.zaxxer:HikariCP:5.0.1")
@@ -37,11 +40,11 @@ dependencies {
     implementation("com.squareup.sqldelight:jdbc-driver:1.5.5")
 
     // HTTP client
-    implementation("io.ktor:ktor-client-core:2.3.1")
-    implementation("io.ktor:ktor-client-java:2.3.1")
+    implementation("io.ktor:ktor-client-core:2.3.2")
+    implementation("io.ktor:ktor-client-java:2.3.2")
     // JSON support
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.1")
-    implementation("io.ktor:ktor-serialization-jackson:2.3.1")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.2")
+    implementation("io.ktor:ktor-serialization-jackson:2.3.2")
 
     // CSV Parsing
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.1")

@@ -6,7 +6,7 @@ import com.dkosub.ffxiv.tools.model.response.Watch
 import com.dkosub.ffxiv.tools.service.WatchService
 import io.jooby.Context
 import io.jooby.annotation.*
-import io.jooby.body
+import io.jooby.kt.body
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,7 +24,7 @@ class WatchController @Inject constructor(
     @POST
     suspend fun create(ctx: Context): List<Watch> {
         val account = ctx.validateAccount()
-        val body = ctx.body<CreateWatchRequest>()
+        val body = ctx.body(CreateWatchRequest::class)
 
         // TODO: SQLDelight doesn't support RETURNING so we have to return the full list for now
         return when (body.type) {
