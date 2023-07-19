@@ -1,8 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.8.22"
-    kotlin("kapt") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
+    kotlin("kapt") version "1.9.0"
     application
 
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -12,26 +12,26 @@ plugins {
 
 dependencies {
     // Jooby core
-    implementation("io.jooby:jooby:3.0.0.M11")
-    implementation("io.jooby:jooby-kotlin:3.0.0.M11")
+    implementation("io.jooby:jooby:3.0.0")
+    implementation("io.jooby:jooby-kotlin:3.0.0")
     // Web server
-    implementation("io.jooby:jooby-undertow:3.0.0.M11")
-    kapt("io.jooby:jooby-apt:3.0.0.M11")
+    implementation("io.jooby:jooby-undertow:3.0.0")
+    kapt("io.jooby:jooby-apt:3.0.0")
     // Jackson support
-    implementation("io.jooby:jooby-jackson:3.0.0.M11")
+    implementation("io.jooby:jooby-jackson:3.0.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
     // Session management
-    implementation("io.jooby:jooby-redis:3.0.0.M11")
+    implementation("io.jooby:jooby-redis:3.0.0")
 
     // Dependency injection
-    implementation("com.google.dagger:dagger:2.46.1")
-    kapt("com.google.dagger:dagger-compiler:2.46.1")
+    implementation("com.google.dagger:dagger:2.47")
+    kapt("com.google.dagger:dagger-compiler:2.47")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.4.8")
 
     // Scheduling
-    implementation("io.jooby:jooby-quartz:3.0.0.M11")
+    implementation("io.jooby:jooby-quartz:3.0.0")
 
     // Database
     implementation("com.zaxxer:HikariCP:5.0.1")
