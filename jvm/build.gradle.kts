@@ -1,37 +1,37 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.9.0"
-    kotlin("kapt") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
+    kotlin("kapt") version "1.9.10"
     application
 
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.squareup.sqldelight") version "1.5.5"
-    id("org.flywaydb.flyway") version "9.20.0"
+    id("org.flywaydb.flyway") version "9.22.0"
 }
 
 dependencies {
     // Jooby core
-    implementation("io.jooby:jooby:3.0.0")
-    implementation("io.jooby:jooby-kotlin:3.0.0")
+    implementation("io.jooby:jooby:3.0.5")
+    implementation("io.jooby:jooby-kotlin:3.0.5")
     // Web server
-    implementation("io.jooby:jooby-undertow:3.0.0")
+    implementation("io.jooby:jooby-undertow:3.0.5")
     kapt("io.jooby:jooby-apt:3.0.0")
     // Jackson support
-    implementation("io.jooby:jooby-jackson:3.0.0")
+    implementation("io.jooby:jooby-jackson:3.0.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
     // Session management
-    implementation("io.jooby:jooby-redis:3.0.0")
+    implementation("io.jooby:jooby-redis:3.0.5")
 
     // Dependency injection
-    implementation("com.google.dagger:dagger:2.47")
-    kapt("com.google.dagger:dagger-compiler:2.47")
+    implementation("com.google.dagger:dagger:2.48")
+    kapt("com.google.dagger:dagger-compiler:2.48")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.4.8")
+    implementation("ch.qos.logback:logback-classic:1.4.11")
 
     // Scheduling
-    implementation("io.jooby:jooby-quartz:3.0.0")
+    implementation("io.jooby:jooby-quartz:3.0.5")
 
     // Database
     implementation("com.zaxxer:HikariCP:5.0.1")
@@ -40,17 +40,17 @@ dependencies {
     implementation("com.squareup.sqldelight:jdbc-driver:1.5.5")
 
     // HTTP client
-    implementation("io.ktor:ktor-client-core:2.3.2")
-    implementation("io.ktor:ktor-client-java:2.3.2")
+    implementation("io.ktor:ktor-client-core:2.3.4")
+    implementation("io.ktor:ktor-client-java:2.3.4")
     // JSON support
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.2")
-    implementation("io.ktor:ktor-serialization-jackson:2.3.2")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.4")
+    implementation("io.ktor:ktor-serialization-jackson:2.3.4")
 
     // CSV Parsing
-    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.1")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.2")
 
     testImplementation(kotlin("test"))
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
 }
 
